@@ -866,6 +866,43 @@ public final class OrderDao {
         return out;
     }
 
+    public java.util.List<com.groupxx.greengrocer.model.CarrierReviewRecord> listCarrierReviewsForCarrier(
+            String carrierUsername) throws Exception {
+        String sql = """
+                SELECT o.id AS order_id,
+                       cust.username AS customer_username,
+                       carr.username AS carrier_username,
+                       o.carrier_rating,
+                       o.carrier_comment,
+                       o.delivered_time
+                FROM order_info o
+                JOIN user_info cust ON cust.id = o.customer_id
+                JOIN user_info carr ON carr.id = o.carrier_id
+                WHERE carr.username = ? AND o.carrier_rating IS NOT NULL
+                ORDER BY o.delivered_time DESC
+                """;
+
+        java.util.List<com.groupxx.greengrocer.model.CarrierReviewRecord> out = new java.util.ArrayList<>();
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, carrierUsername);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    java.sql.Timestamp ts = rs.getTimestamp("delivered_time");
+                    java.time.LocalDateTime reviewTime = (ts == null) ? null : ts.toLocalDateTime();
+                    out.add(new com.groupxx.greengrocer.model.CarrierReviewRecord(
+                            rs.getLong("order_id"),
+                            rs.getString("customer_username"),
+                            rs.getString("carrier_username"),
+                            rs.getInt("carrier_rating"),
+                            rs.getString("carrier_comment"),
+                            reviewTime));
+                }
+            }
+        }
+        return out;
+    }
+
     /**
      * Counts orders assigned to this carrier that are not yet delivered (active
      * deliveries).

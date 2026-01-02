@@ -40,6 +40,11 @@ public class CarrierHomeController {
     @FXML
     private TableColumn<OrderSummaryRecord, String> dId, dCustomer, dDelivered, dTotal;
 
+    @FXML
+    private TableView<com.groupxx.greengrocer.model.CarrierReviewRecord> reviewsTable;
+    @FXML
+    private TableColumn<com.groupxx.greengrocer.model.CarrierReviewRecord, String> rDate, rCustomer, rRating, rComment;
+
     private final OrderDao orderDao = new OrderDao();
 
     @FXML
@@ -55,6 +60,12 @@ public class CarrierHomeController {
                 cd -> new SimpleStringProperty(Formatters.formatDateTime(cd.getValue().deliveredTime())));
         dTotal.setCellValueFactory(
                 cd -> new SimpleStringProperty(Formatters.formatMoney(cd.getValue().totalInclVat())));
+
+        // Reviews
+        rDate.setCellValueFactory(c -> new SimpleStringProperty(Formatters.formatDateTime(c.getValue().reviewTime())));
+        rCustomer.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().customerUsername()));
+        rRating.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().rating()) + "/5"));
+        rComment.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().comment()));
 
         loadAll();
     }
@@ -80,10 +91,13 @@ public class CarrierHomeController {
             List<OrderSummaryRecord> available = orderDao.listAvailableOrders();
             List<OrderSummaryRecord> current = orderDao.listCurrentOrdersForCarrierUsername(carrierUsername);
             List<OrderSummaryRecord> completed = orderDao.listCompletedOrdersForCarrierUsername(carrierUsername);
+            List<com.groupxx.greengrocer.model.CarrierReviewRecord> reviews = orderDao
+                    .listCarrierReviewsForCarrier(carrierUsername);
 
             availableTable.getItems().setAll(available);
             currentTable.getItems().setAll(current);
             completedTable.getItems().setAll(completed);
+            reviewsTable.getItems().setAll(reviews);
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Failed to load carrier orders", e);
             Alerts.unexpected("Failed to load carrier orders.", e);
@@ -241,13 +255,8 @@ public class CarrierHomeController {
     }
 
     @FXML
-    private void onRefresh() {
-        loadAll();
-    }
-
-    @FXML
     private void onOpenProfile() {
-        ProfileWindow.showAndWait(this::onRefresh);
+        ProfileWindow.showAndWait(this::loadAll);
     }
 
     @FXML

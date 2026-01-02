@@ -14,7 +14,6 @@
             <children>
                 <Label text="Carrier Panel" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Button text="Refresh" onAction="#onRefresh"/>
                 <Button text="Profile" onAction="#onOpenProfile"/>
                 <Button text="Logout" onAction="#onLogout"/>
             </children>
@@ -82,6 +81,18 @@
                             <TableColumn fx:id="dCustomer" text="Customer"/>
                             <TableColumn fx:id="dDelivered" text="Delivered At"/>
                             <TableColumn fx:id="dTotal" text="Total (incl. VAT)"/>
+                        </columns>
+                    </TableView>
+                </Tab>
+
+                <Tab text="My Reviews" closable="false">
+                    <TableView fx:id="reviewsTable">
+                        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                        <columns>
+                            <TableColumn fx:id="rDate" text="Date"/>
+                            <TableColumn fx:id="rCustomer" text="Customer"/>
+                            <TableColumn fx:id="rRating" text="Rating"/>
+                            <TableColumn fx:id="rComment" text="Comment"/>
                         </columns>
                     </TableView>
                 </Tab>
