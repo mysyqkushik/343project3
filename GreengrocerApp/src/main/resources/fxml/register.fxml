@@ -11,7 +11,7 @@
     <top>
         <VBox spacing="6" alignment="CENTER">
             <Label text="Register as Customer" styleClass="title"/>
-            <Label text="Strong password required (upper/lower/digit/special, no spaces)." styleClass="subtitle"/>
+            <Label text="Rules: ≥8 chars, upper + lower case, digit, special char." styleClass="subtitle"/>
         </VBox>
     </top>
 

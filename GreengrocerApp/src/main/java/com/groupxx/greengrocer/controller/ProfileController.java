@@ -155,6 +155,10 @@ public final class ProfileController {
         grid.add(new Label("Confirm Password:"), 0, 2);
         grid.add(confirmPasswordField, 1, 2);
 
+        Label rules = new Label("Rules: ≥8 chars, upper + lower case, digit, special char.");
+        rules.setStyle("-fx-text-fill: rgba(0,0,0,0.65); -fx-font-size: 11px;");
+        grid.add(rules, 1, 3);
+
         dialog.getDialogPane().setContent(grid);
 
         // Show dialog and handle result
