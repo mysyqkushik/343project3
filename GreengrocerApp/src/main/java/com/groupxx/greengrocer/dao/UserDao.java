@@ -457,4 +457,60 @@ public final class UserDao {
             return out;
         }
     }
+
+    /** Count total customers (non-deleted). */
+    public int countCustomers() throws Exception {
+        String sql = "SELECT COUNT(*) FROM user_info WHERE role = 'CUSTOMER' AND deleted = 0";
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            rs.next();
+            return rs.getInt(1);
+        }
+    }
+
+    /** List all carriers (including inactive) with average rating. */
+    public List<CarrierSummaryRecord> listAllCarriersWithAvgRating() throws Exception {
+        String sql = """
+                SELECT u.id, u.username, u.active,
+                       AVG(o.carrier_rating) AS avg_rating
+                FROM user_info u
+                LEFT JOIN order_info o
+                  ON o.carrier_id = u.id AND o.carrier_rating IS NOT NULL
+                WHERE u.role = 'CARRIER'
+                GROUP BY u.id, u.username, u.active
+                ORDER BY u.username ASC
+                """;
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            List<CarrierSummaryRecord> out = new ArrayList<>();
+            while (rs.next()) {
+                Object avgObj = rs.getObject("avg_rating");
+                Double avg = (avgObj == null) ? null : ((Number) avgObj).doubleValue();
+                out.add(new CarrierSummaryRecord(
+                        rs.getLong("id"),
+                        rs.getString("username"),
+                        rs.getBoolean("active"),
+                        avg));
+            }
+            return out;
+        }
+    }
+
+    /** Get creation dates of all customers (for historical charts). */
+    public List<java.time.LocalDate> getCustomerCreationDates() throws Exception {
+        String sql = "SELECT DATE(created_at) FROM user_info WHERE role = 'CUSTOMER'";
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            List<java.time.LocalDate> dates = new ArrayList<>();
+            while (rs.next()) {
+                java.sql.Date d = rs.getDate(1);
+                if (d != null)
+                    dates.add(d.toLocalDate());
+            }
+            return dates;
+        }
+    }
 }

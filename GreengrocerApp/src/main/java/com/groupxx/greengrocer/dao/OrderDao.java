@@ -764,6 +764,53 @@ public final class OrderDao {
         return out;
     }
 
+    /** Count distinct customers who placed orders in the last N days. */
+    public int countDistinctCustomersLastDays(int days) throws Exception {
+        int d = Math.max(1, Math.min(days, 365));
+        String sql = """
+                SELECT COUNT(DISTINCT customer_id)
+                FROM order_info
+                WHERE created_at >= (NOW() - INTERVAL ? DAY)
+                  AND is_canceled = 0
+                """;
+
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, d);
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1);
+            }
+        }
+    }
+
+    public java.util.Map<java.time.LocalDate, java.util.Set<Long>> getDailyCustomersLastDays(int days)
+            throws Exception {
+        int d = Math.max(1, Math.min(days, 365)) + 5; // buffer for 5-day window
+        String sql = """
+                SELECT DATE(created_at) as day, customer_id
+                FROM order_info
+                WHERE created_at >= (NOW() - INTERVAL ? DAY)
+                  AND is_canceled = 0
+                """;
+
+        java.util.Map<java.time.LocalDate, java.util.Set<Long>> map = new java.util.HashMap<>();
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, d);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    java.sql.Date dt = rs.getDate("day");
+                    if (dt != null) {
+                        java.time.LocalDate ld = dt.toLocalDate();
+                        map.computeIfAbsent(ld, k -> new java.util.HashSet<>()).add(rs.getLong("customer_id"));
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
     public boolean rateCarrierByCustomerUsername(String customerUsername, long orderId, int rating, String comment)
             throws Exception {
         if (rating < 1 || rating > 5)
