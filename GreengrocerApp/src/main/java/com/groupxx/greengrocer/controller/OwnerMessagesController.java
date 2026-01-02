@@ -16,8 +16,6 @@ import javafx.scene.control.*;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /** Owner ↔ Customer messaging (reply as OWNER). */
@@ -32,6 +30,10 @@ public final class OwnerMessagesController {
 
     @FXML
     private TableView<MessageRecord> messageTable;
+    @FXML
+    private TableColumn<MessageRecord, String> custIdCol;
+    @FXML
+    private TableColumn<MessageRecord, String> custNameCol;
     @FXML
     private TableColumn<MessageRecord, String> timeCol;
     @FXML
@@ -86,6 +88,11 @@ public final class OwnerMessagesController {
             }
         });
 
+        // Setup table columns
+        custIdCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
+                String.valueOf(cd.getValue().customerId())));
+        custNameCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
+                cd.getValue().customerUsername()));
         timeCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
                 Formatters.fmtDateTime(cd.getValue().createdAt())));
         fromCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
@@ -183,11 +190,16 @@ public final class OwnerMessagesController {
                     if (String.valueOf(u.id()).contains(query))
                         match = true;
                 } else if ("Orders".equals(filterType)) {
-                    // Filter by order count >= query or exact match?
-                    // Let's do exact match or "greater than" if query starts with >
-                    // Simple approach: string contains (flexibility)
-                    if (String.valueOf(rec.orderCount()).contains(query))
-                        match = true;
+                    // Filter by order count >= query value
+                    try {
+                        int minOrders = Integer.parseInt(query);
+                        if (rec.orderCount() >= minOrders)
+                            match = true;
+                    } catch (NumberFormatException ignored) {
+                        // If not a number, fallback to string contains
+                        if (String.valueOf(rec.orderCount()).contains(query))
+                            match = true;
+                    }
                 }
 
                 if (match) {

@@ -12,12 +12,14 @@
         <HBox spacing="10" alignment="CENTER_LEFT">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
             <children>
-                <Label text="Filter:"/>
+                <Label text="Filter by:"/>
+                <ComboBox fx:id="filterTypeCombo" prefWidth="100">
+                    <tooltip><Tooltip text="Name: Filter by username&#10;ID: Filter by user ID&#10;Orders: Filter by order count (≥ entered number)"/></tooltip>
+                </ComboBox>
                 <TextField fx:id="searchField" promptText="Search..." prefWidth="120"/>
-                <ComboBox fx:id="filterTypeCombo" prefWidth="100"/>
                 <Region minWidth="20"/>
                 <Label text="Customer:"/>
-                <ComboBox fx:id="customerCombo" prefWidth="250"/>
+                <ComboBox fx:id="customerCombo" prefWidth="280"/>
                 <Pane HBox.hgrow="ALWAYS"/>
             </children>
         </HBox>
@@ -27,8 +29,10 @@
         <TableView fx:id="messageTable">
             <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
             <columns>
+                <TableColumn fx:id="custIdCol" text="Cust ID" prefWidth="60"/>
+                <TableColumn fx:id="custNameCol" text="Customer" prefWidth="100"/>
                 <TableColumn fx:id="timeCol" text="Time" prefWidth="140"/>
-                <TableColumn fx:id="fromCol" text="From" prefWidth="110"/>
+                <TableColumn fx:id="fromCol" text="From" prefWidth="80"/>
                 <TableColumn fx:id="textCol" text="Message"/>
             </columns>
         </TableView>
