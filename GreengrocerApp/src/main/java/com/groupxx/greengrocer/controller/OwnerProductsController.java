@@ -107,6 +107,18 @@ public final class OwnerProductsController {
                 Alerts.warn("Validation", "Product name is required.");
                 return;
             }
+
+            // Check for unique name (global)
+            Long existingId = productDao.findIdByName(name);
+            if (existingId != null) {
+                if (selected == null || existingId != selected.id()) {
+                    Alerts.warn("Duplicate Name",
+                            "Product '" + name + "' already exists.",
+                            "Product names must be unique across all categories.");
+                    return;
+                }
+            }
+
             ProductCategory category = categoryBox.getSelectionModel().getSelectedItem();
             if (category == null)
                 category = ProductCategory.VEGETABLE;

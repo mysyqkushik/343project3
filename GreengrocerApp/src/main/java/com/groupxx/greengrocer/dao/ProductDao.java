@@ -126,6 +126,17 @@ public final class ProductDao {
         }
     }
 
+    public Long findIdByName(String name) throws Exception {
+        String sql = "SELECT id FROM product_info WHERE LOWER(name) = LOWER(?) LIMIT 1";
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getLong("id") : null;
+            }
+        }
+    }
+
     public long createProduct(String name, ProductCategory category, BigDecimal pricePerKg,
             BigDecimal stockKg, BigDecimal thresholdKg, byte[] imageBytes, boolean active) throws Exception {
         // Auto-generate placeholder if no image provided
