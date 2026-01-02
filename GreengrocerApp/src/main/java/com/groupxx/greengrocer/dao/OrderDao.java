@@ -6,6 +6,7 @@ import com.groupxx.greengrocer.util.InvoicePdfGenerator;
 import com.groupxx.greengrocer.dao.SettingsDao;
 import com.groupxx.greengrocer.model.CartLine;
 import com.groupxx.greengrocer.model.Coupon;
+import com.groupxx.greengrocer.model.ProductRecord;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -116,15 +117,31 @@ public final class OrderDao {
                 }
 
                 // 1) Check stock + update stock
+                MessageDao messageDao = new MessageDao();
+
                 for (CartLine l : lines) {
-                    BigDecimal stock = com.groupxx.greengrocer.util.BigDecimalUtil
-                            .nz(getStockForUpdate(c, l.productId()));
+                    ProductRecord locked = getProductForUpdate(c, l.productId());
+                    if (locked == null) {
+                        throw new IllegalStateException("Product not found: " + l.productId());
+                    }
+                    BigDecimal stock = com.groupxx.greengrocer.util.BigDecimalUtil.nz(locked.stockKg());
                     BigDecimal kg = com.groupxx.greengrocer.util.BigDecimalUtil.nz(l.kg());
+
                     if (stock.compareTo(kg) < 0) {
                         throw new IllegalStateException("Not enough stock for: " + l.name());
                     }
+
                     BigDecimal newStock = stock.subtract(kg);
                     updateStock(c, l.productId(), newStock);
+
+                    // Check for low stock alert
+                    BigDecimal threshold = com.groupxx.greengrocer.util.BigDecimalUtil.nz(locked.thresholdKg());
+                    if (newStock.compareTo(threshold) < 0) {
+                        // Trigger alert!
+                        String msg = String.format("Stock for '%s' is low! Remaining: %s kg (Threshold: %s kg)",
+                                l.name(), newStock, threshold);
+                        messageDao.sendSystemAlert(msg);
+                    }
                 }
 
                 // 2) Compute totals (using cart unit prices shown to user)
@@ -263,15 +280,25 @@ public final class OrderDao {
         }
     }
 
-    private static BigDecimal getStockForUpdate(Connection c, long productId) throws Exception {
+    private static com.groupxx.greengrocer.model.ProductRecord getProductForUpdate(Connection c, long productId)
+            throws Exception {
         try (PreparedStatement ps = c.prepareStatement("""
-                SELECT stock_kg FROM product_info WHERE id = ? FOR UPDATE
+                SELECT id, name, category, price_per_kg, stock_kg, threshold_kg, image_blob, active
+                FROM product_info WHERE id = ? FOR UPDATE
                 """)) {
             ps.setLong(1, productId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next())
-                    throw new IllegalStateException("Product not found: " + productId);
-                return rs.getBigDecimal(1);
+                    return null;
+                return new com.groupxx.greengrocer.model.ProductRecord(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        com.groupxx.greengrocer.model.ProductCategory.valueOf(rs.getString("category")),
+                        rs.getBigDecimal("price_per_kg"),
+                        rs.getBigDecimal("stock_kg"),
+                        rs.getBigDecimal("threshold_kg"),
+                        rs.getBytes("image_blob"), // not strictly needed but keeps object consist
+                        rs.getBoolean("active"));
             }
         }
     }

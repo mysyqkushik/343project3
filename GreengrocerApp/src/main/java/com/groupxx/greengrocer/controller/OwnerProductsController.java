@@ -64,8 +64,13 @@ public final class OwnerProductsController {
         colCategory.setCellValueFactory(v -> new SimpleStringProperty(v.getValue().category().name()));
         // Owner edits the BASE price; Customer view uses effectivePricePerKg() when
         // stock <= threshold.
-        colPrice.setCellValueFactory(
-                v -> new SimpleStringProperty(Formatters.formatMoney(v.getValue().basePricePerKg())));
+        // Display: "50.00 | 100.00" (Base | Surge)
+        colPrice.setCellValueFactory(v -> {
+            BigDecimal base = v.getValue().basePricePerKg();
+            BigDecimal surge = base.multiply(new BigDecimal("2.00")); // Hardcoded 2x multiplier
+            return new SimpleStringProperty(
+                    Formatters.formatMoney(base) + " | " + Formatters.formatMoney(surge));
+        });
         colStock.setCellValueFactory(v -> new SimpleStringProperty(Formatters.formatQuantity(v.getValue().stockKg())));
         colThreshold.setCellValueFactory(
                 v -> new SimpleStringProperty(Formatters.formatQuantity(v.getValue().thresholdKg())));
