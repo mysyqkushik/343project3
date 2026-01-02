@@ -113,6 +113,13 @@ public final class OwnerProductsController {
                 return;
             }
 
+            // Prevent pure numbers as name
+            if (name.matches("^\\d+$")) {
+                Alerts.warn("Validation", "Product name cannot be just numbers.",
+                        "Please use a descriptive name (e.g., 'Apple', 'Carrot').");
+                return;
+            }
+
             // Check for unique name (global)
             Long existingId = productDao.findIdByName(name);
             if (existingId != null) {
