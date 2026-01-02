@@ -3,6 +3,7 @@ package com.groupxx.greengrocer.dao;
 import com.groupxx.greengrocer.db.DbAdapter;
 import com.groupxx.greengrocer.model.Role;
 import com.groupxx.greengrocer.model.UserRecord;
+import com.groupxx.greengrocer.model.CustomerSummaryRecord;
 import com.groupxx.greengrocer.model.CarrierSummaryRecord;
 import com.groupxx.greengrocer.util.PasswordHasher;
 
@@ -424,6 +425,36 @@ public final class UserDao {
             return;
         try (PreparedStatement ps = c.prepareStatement("ALTER TABLE " + table + " ADD COLUMN " + definition)) {
             ps.execute();
+        }
+    }
+
+    public List<CustomerSummaryRecord> listCustomersWithOrderCounts() throws Exception {
+        String sql = """
+                SELECT u.id, u.username, u.role, u.address, u.phone, u.email, u.active, COUNT(o.id) AS order_cnt
+                FROM user_info u
+                LEFT JOIN order_info o ON o.customer_id = u.id
+                WHERE u.role = 'CUSTOMER'
+                GROUP BY u.id, u.username, u.role, u.address, u.phone, u.email, u.active
+                ORDER BY u.username ASC
+                """;
+
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            List<CustomerSummaryRecord> out = new ArrayList<>();
+            while (rs.next()) {
+                UserRecord u = new UserRecord(
+                        rs.getLong("id"),
+                        rs.getString("username"),
+                        Role.valueOf(rs.getString("role")),
+                        rs.getString("address"),
+                        rs.getString("phone"),
+                        rs.getString("email"));
+                int cnt = rs.getInt("order_cnt");
+                out.add(new CustomerSummaryRecord(u, cnt));
+            }
+            return out;
         }
     }
 }

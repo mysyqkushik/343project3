@@ -12,8 +12,12 @@
         <HBox spacing="10" alignment="CENTER_LEFT">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
             <children>
+                <Label text="Filter:"/>
+                <TextField fx:id="searchField" promptText="Search..." prefWidth="120"/>
+                <ComboBox fx:id="filterTypeCombo" prefWidth="100"/>
+                <Region minWidth="20"/>
                 <Label text="Customer:"/>
-                <ComboBox fx:id="customerCombo" prefWidth="220"/>
+                <ComboBox fx:id="customerCombo" prefWidth="250"/>
                 <Pane HBox.hgrow="ALWAYS"/>
             </children>
         </HBox>

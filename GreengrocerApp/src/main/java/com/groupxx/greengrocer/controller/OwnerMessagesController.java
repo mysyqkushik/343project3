@@ -2,27 +2,33 @@ package com.groupxx.greengrocer.controller;
 
 import com.groupxx.greengrocer.dao.MessageDao;
 import com.groupxx.greengrocer.dao.UserDao;
+import com.groupxx.greengrocer.model.CustomerSummaryRecord;
 import com.groupxx.greengrocer.model.MessageRecord;
 import com.groupxx.greengrocer.model.Role;
 import com.groupxx.greengrocer.model.UserRecord;
 import com.groupxx.greengrocer.util.Alerts;
 import com.groupxx.greengrocer.util.Formatters;
-import com.groupxx.greengrocer.util.Validators;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
-import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /** Owner ↔ Customer messaging (reply as OWNER). */
 public final class OwnerMessagesController {
 
     @FXML
-    private ComboBox<UserRecord> customerCombo;
+    private ComboBox<String> filterTypeCombo;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<CustomerSummaryRecord> customerCombo;
 
     @FXML
     private TableView<MessageRecord> messageTable;
@@ -45,23 +51,37 @@ public final class OwnerMessagesController {
     private final UserDao userDao = new UserDao();
     private final MessageDao messageDao = new MessageDao();
 
-    private static final UserRecord ALL_USERS = new UserRecord(-1, "All Users", Role.CUSTOMER, null, null, null);
+    // "All Users" placeholder
+    private static final CustomerSummaryRecord ALL_USERS = new CustomerSummaryRecord(
+            new UserRecord(-1, "All Users", Role.CUSTOMER, null, null, null), 0);
 
     private Timeline pendingSendTimeline;
     private int pendingSecondsLeft;
     private long pendingCustomerId;
     private String pendingText;
 
+    private List<CustomerSummaryRecord> fullCustomerList = new ArrayList<>();
+
     @FXML
     public void initialize() {
+        // Setup filter types
+        filterTypeCombo.setItems(FXCollections.observableArrayList("Name", "ID", "Orders"));
+        filterTypeCombo.getSelectionModel().select(0);
+        filterTypeCombo.setOnAction(e -> applyFilter());
+        searchField.textProperty().addListener((o, ov, nv) -> applyFilter());
+
         customerCombo.setConverter(new javafx.util.StringConverter<>() {
             @Override
-            public String toString(UserRecord u) {
-                return u == null ? "" : u.username();
+            public String toString(CustomerSummaryRecord r) {
+                if (r == null)
+                    return "";
+                if (r.user().id() == -1)
+                    return "All Users";
+                return r.user().username() + " (ID:" + r.user().id() + ", Ords:" + r.orderCount() + ")";
             }
 
             @Override
-            public UserRecord fromString(String s) {
+            public CustomerSummaryRecord fromString(String s) {
                 return null;
             }
         });
@@ -88,12 +108,14 @@ public final class OwnerMessagesController {
 
     @FXML
     public void onSend() {
-        UserRecord customer = customerCombo.getSelectionModel().getSelectedItem();
+        CustomerSummaryRecord summary = customerCombo.getSelectionModel().getSelectedItem();
+        UserRecord customer = (summary == null) ? null : summary.user();
+
         if (customer == null) {
             Alerts.showWarn("No customer selected", "Please select a customer.", "");
             return;
         }
-        if (customer.id() == ALL_USERS.id()) {
+        if (customer.id() == ALL_USERS.user().id()) {
             Alerts.showWarn("All Users view", "Select a specific customer to reply.", "");
             return;
         }
@@ -117,21 +139,79 @@ public final class OwnerMessagesController {
 
     private void reloadCustomers() {
         try {
-            List<UserRecord> customers = new java.util.ArrayList<>();
-            customers.add(ALL_USERS);
-            customers.addAll(userDao.listCustomers());
-            customerCombo.setItems(FXCollections.observableArrayList(customers));
-            if (!customers.isEmpty() && customerCombo.getSelectionModel().getSelectedItem() == null) {
-                customerCombo.getSelectionModel().select(0); // All Users by default
-            }
+            fullCustomerList.clear();
+            fullCustomerList.add(ALL_USERS);
+            fullCustomerList.addAll(userDao.listCustomersWithOrderCounts());
+            applyFilter(); // This will populate customerCombo
         } catch (Exception ex) {
             Alerts.showError("Load Failed", "Cannot load customer list.", ex.getMessage());
         }
     }
 
+    private void applyFilter() {
+        String filterType = filterTypeCombo.getValue();
+        String query = searchField.getText();
+
+        if (query == null)
+            query = "";
+        query = query.trim().toLowerCase();
+
+        List<CustomerSummaryRecord> filtered = new ArrayList<>();
+
+        if (query.isEmpty()) {
+            filtered.addAll(fullCustomerList);
+        } else {
+            // Always include "All Users" if it matches specific criteria or just keep it at
+            // top?
+            // Usually search implies strict filtering, so we might exclude "All Users" if
+            // it doesn't match query.
+            // But let's keep "All Users" only if query is empty or explicitly searching for
+            // "All".
+            // Implementation decision: Search strictly filters the list.
+
+            for (CustomerSummaryRecord rec : fullCustomerList) {
+                if (rec == ALL_USERS)
+                    continue; // Skip ALL_USERS during search iteration
+
+                boolean match = false;
+                UserRecord u = rec.user();
+
+                if ("Name".equals(filterType)) {
+                    if (u.username().toLowerCase().contains(query))
+                        match = true;
+                } else if ("ID".equals(filterType)) {
+                    if (String.valueOf(u.id()).contains(query))
+                        match = true;
+                } else if ("Orders".equals(filterType)) {
+                    // Filter by order count >= query or exact match?
+                    // Let's do exact match or "greater than" if query starts with >
+                    // Simple approach: string contains (flexibility)
+                    if (String.valueOf(rec.orderCount()).contains(query))
+                        match = true;
+                }
+
+                if (match) {
+                    filtered.add(rec);
+                }
+            }
+        }
+
+        // Preserve selection if possible
+        CustomerSummaryRecord selected = customerCombo.getSelectionModel().getSelectedItem();
+
+        customerCombo.setItems(FXCollections.observableArrayList(filtered));
+
+        if (selected != null && filtered.contains(selected)) {
+            customerCombo.getSelectionModel().select(selected);
+        } else if (!filtered.isEmpty()) {
+            customerCombo.getSelectionModel().select(0);
+        }
+    }
+
     private void refreshConversation() {
-        UserRecord customer = customerCombo.getSelectionModel().getSelectedItem();
-        boolean all = (customer != null && customer.id() == ALL_USERS.id());
+        CustomerSummaryRecord summary = customerCombo.getSelectionModel().getSelectedItem();
+        UserRecord customer = (summary == null) ? null : summary.user();
+        boolean all = (customer != null && customer.id() == ALL_USERS.user().id());
 
         // disable reply UI in "All Users" mode
         messageInput.setDisable(all || customer == null);
@@ -240,8 +320,9 @@ public final class OwnerMessagesController {
 
         customerCombo.setDisable(false);
 
-        UserRecord sel = customerCombo.getSelectionModel().getSelectedItem();
-        boolean all = (sel != null && sel.id() == ALL_USERS.id());
+        CustomerSummaryRecord summary = customerCombo.getSelectionModel().getSelectedItem();
+        UserRecord sel = (summary != null) ? summary.user() : null;
+        boolean all = (sel != null && sel.id() == ALL_USERS.user().id());
         sendBtn.setDisable(all || sel == null);
 
         Alerts.showInfo("Canceled", "Message sending canceled.", "");
@@ -276,10 +357,10 @@ public final class OwnerMessagesController {
 
             customerCombo.setDisable(false);
 
-            UserRecord sel = customerCombo.getSelectionModel().getSelectedItem();
-            boolean all = (sel != null && sel.id() == ALL_USERS.id());
+            CustomerSummaryRecord summary = customerCombo.getSelectionModel().getSelectedItem();
+            UserRecord sel = (summary != null) ? summary.user() : null;
+            boolean all = (sel != null && sel.id() == ALL_USERS.user().id());
             sendBtn.setDisable(all || sel == null);
         }
     }
-
 }
