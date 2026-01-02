@@ -44,6 +44,7 @@ public final class UserDao {
             ensureColumn(c, "user_info", "deleted", "deleted BOOLEAN NOT NULL DEFAULT 0");
             ensureColumn(c, "user_info", "deleted_at", "deleted_at TIMESTAMP NULL");
             ensureColumn(c, "user_info", "active", "active BOOLEAN NOT NULL DEFAULT 1");
+            ensureColumn(c, "user_info", "profile_image", "profile_image LONGBLOB NULL");
             try (PreparedStatement ps = c.prepareStatement("UPDATE user_info SET active=1 WHERE active IS NULL")) {
                 ps.executeUpdate();
             }
@@ -511,6 +512,30 @@ public final class UserDao {
                     dates.add(d.toLocalDate());
             }
             return dates;
+        }
+    }
+
+    public byte[] getProfileImage(long userId) throws Exception {
+        String sql = "SELECT profile_image FROM user_info WHERE id = ?";
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBytes("profile_image");
+                }
+            }
+        }
+        return null;
+    }
+
+    public void updateProfileImage(long userId, byte[] imageDetails) throws Exception {
+        String sql = "UPDATE user_info SET profile_image = ? WHERE id = ?";
+        try (Connection c = DbAdapter.getInstance().getConnection();
+                PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setBytes(1, imageDetails);
+            ps.setLong(2, userId);
+            ps.executeUpdate();
         }
     }
 }

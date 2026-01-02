@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -19,6 +20,15 @@
     <center>
         <VBox spacing="10">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <children>
+                    <ImageView fx:id="profileImageView" fitWidth="80" fitHeight="80" preserveRatio="true" pickOnBounds="true">
+                        <!-- Placeholder or default image can be set in controller -->
+                    </ImageView>
+                    <Button text="Change Photo..." onAction="#onChangePhoto"/>
+                </children>
+            </HBox>
 
             <GridPane hgap="10" vgap="10">
                 <columnConstraints>

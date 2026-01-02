@@ -9,7 +9,10 @@ import com.groupxx.greengrocer.util.Validators;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -30,6 +33,9 @@ public final class ProfileController {
     private Label statusLabel;
     @FXML
     private Button saveBtn;
+
+    @FXML
+    private ImageView profileImageView;
 
     private final UserDao userDao = new UserDao();
     private UserRecord current;
@@ -60,9 +66,55 @@ public final class ProfileController {
             phoneField.setText(current.phone() == null ? "" : current.phone());
             emailField.setText(current.email() == null ? "" : current.email());
             statusLabel.setText("");
+
+            // Load profile image
+            try {
+                byte[] imgBytes = userDao.getProfileImage(current.id());
+                if (imgBytes != null && imgBytes.length > 0) {
+                    Image img = new Image(new java.io.ByteArrayInputStream(imgBytes));
+                    profileImageView.setImage(img);
+                } else {
+                    // Set a default placeholder if needed, or leave blank/icon
+                    // For now, load a resource or just null
+                    profileImageView.setImage(null);
+                }
+            } catch (Exception ex) {
+                // Ignore image load error
+                System.err.println("Failed to load profile image: " + ex.getMessage());
+            }
+
         } catch (Exception ex) {
             Alerts.showError("Profile", "Cannot load profile.", ex.getMessage());
             close();
+        }
+    }
+
+    @FXML
+    private void onChangePhoto() {
+        if (current == null)
+            return;
+
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Select Profile Photo");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"));
+        java.io.File file = fc.showOpenDialog(saveBtn.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                if (file.length() > 2 * 1024 * 1024) { // 2MB limit
+                    Alerts.showWarn("Photo too large", "Please select an image smaller than 2MB.", "");
+                    return;
+                }
+                byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
+                userDao.updateProfileImage(current.id(), bytes);
+
+                // Refresh view
+                Image img = new Image(new java.io.ByteArrayInputStream(bytes));
+                profileImageView.setImage(img);
+                statusLabel.setText("Photo updated.");
+            } catch (Exception ex) {
+                Alerts.showError("Photo Error", "Failed to update photo.", ex.getMessage());
+            }
         }
     }
 
