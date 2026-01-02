@@ -3,9 +3,11 @@ package com.groupxx.greengrocer.controller;
 import com.groupxx.greengrocer.app.CartModel;
 import com.groupxx.greengrocer.app.SessionContext;
 import com.groupxx.greengrocer.config.AppConfig;
+import com.groupxx.greengrocer.dao.CouponDao;
 import com.groupxx.greengrocer.dao.OrderDao;
 import com.groupxx.greengrocer.dao.SettingsDao;
 import com.groupxx.greengrocer.model.CartLine;
+import com.groupxx.greengrocer.model.Coupon;
 import com.groupxx.greengrocer.util.Alerts;
 import com.groupxx.greengrocer.util.Formatters;
 import com.groupxx.greengrocer.util.NumericValidators;
@@ -29,38 +31,55 @@ import java.util.logging.Logger;
 public final class CartController {
     private static final Logger LOG = Logger.getLogger(CartController.class.getName());
 
-    @FXML private TableView<CartLine> table;
-    @FXML private TableColumn<CartLine, String> colName;
-    @FXML private TableColumn<CartLine, String> colKg;
-    @FXML private TableColumn<CartLine, String> colUnit;
-    @FXML private TableColumn<CartLine, String> colTotal;
+    @FXML
+    private TableView<CartLine> table;
+    @FXML
+    private TableColumn<CartLine, String> colName;
+    @FXML
+    private TableColumn<CartLine, String> colKg;
+    @FXML
+    private TableColumn<CartLine, String> colUnit;
+    @FXML
+    private TableColumn<CartLine, String> colTotal;
 
-    @FXML private TextField couponField;
-    @FXML private DatePicker deliveryDate;
-    @FXML private Spinner<Integer> hourSpinner;
-    @FXML private Spinner<Integer> minSpinner;
+    @FXML
+    private TextField couponField;
+    @FXML
+    private DatePicker deliveryDate;
+    @FXML
+    private Spinner<Integer> hourSpinner;
+    @FXML
+    private Spinner<Integer> minSpinner;
 
-    @FXML private Label subtotalLabel;
-    @FXML private Label discountLabel;
-    @FXML private Label vatLabel;
-    @FXML private Label totalLabel;
-    @FXML private Label rulesLabel;
-    @FXML private Label statusLabel;
-    @FXML private Button checkoutButton;
+    @FXML
+    private Label subtotalLabel;
+    @FXML
+    private Label discountLabel;
+    @FXML
+    private Label vatLabel;
+    @FXML
+    private Label totalLabel;
+    @FXML
+    private Label rulesLabel;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Button checkoutButton;
 
     private final OrderDao orderDao = new OrderDao();
     private final SettingsDao settingsDao = new SettingsDao();
+    private final CouponDao couponDao = new CouponDao();
 
-    private String couponCode;
-    private BigDecimal couponRate;
-    private BigDecimal couponMinSubtotal;
+    // Loyalty settings (loaded once)
     private BigDecimal loyaltyRate;
     private int loyaltyMinDeliveredOrders;
     private int deliveredOrdersSoFar;
-    private Runnable onSuccessRefresh = () -> {};
+    private Runnable onSuccessRefresh = () -> {
+    };
 
     public void setOnSuccessRefresh(Runnable r) {
-        this.onSuccessRefresh = (r == null) ? () -> {} : r;
+        this.onSuccessRefresh = (r == null) ? () -> {
+        } : r;
     }
 
     @FXML
@@ -75,8 +94,10 @@ public final class CartController {
         colTotal.setCellValueFactory(v -> new SimpleStringProperty(
                 Formatters.formatMoney(com.groupxx.greengrocer.util.BigDecimalUtil.nz(v.getValue().lineTotal()))));
 
-        hourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, LocalTime.now().getHour()));
-        minSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, (LocalTime.now().getMinute() / 5) * 5));
+        hourSpinner
+                .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, LocalTime.now().getHour()));
+        minSpinner.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, (LocalTime.now().getMinute() / 5) * 5));
 
         deliveryDate.setValue(LocalDate.now());
 
@@ -160,9 +181,19 @@ public final class CartController {
         }
 
         String coupon = Validators.normalize(couponField.getText());
-        if (!coupon.isEmpty() && (couponCode == null || !coupon.equalsIgnoreCase(couponCode))) {
-            Alerts.showWarn("Coupon not valid", "Unknown coupon code.", (couponCode == null) ? "" : "Try: " + couponCode);
-            return;
+        if (!coupon.isEmpty()) {
+            // Validate coupon exists
+            try {
+                Coupon found = couponDao.findByCode(coupon);
+                if (found == null) {
+                    Alerts.showWarn("Coupon not valid", "Unknown coupon code.", "");
+                    return;
+                }
+            } catch (Exception ex) {
+                LOG.log(Level.WARNING, "Failed to validate coupon", ex);
+                Alerts.showWarn("Coupon validation error", "Could not validate coupon.", ex.getMessage());
+                return;
+            }
         }
 
         setBusy(true);
@@ -179,8 +210,7 @@ public final class CartController {
                         username,
                         lines,
                         coupon.isEmpty() ? null : coupon,
-                        deliveryTs
-                );
+                        deliveryTs);
 
                 javafx.application.Platform.runLater(() -> {
                     setBusy(false);
@@ -209,20 +239,15 @@ public final class CartController {
 
     private void loadDiscountSettingsAndStats() {
         try {
-            couponCode = settingsDao.getString(SettingsDao.COUPON_CODE, AppConfig.COUPON_CODE);
-            couponRate = settingsDao.getBigDecimal(SettingsDao.COUPON_RATE, AppConfig.COUPON_DISCOUNT_RATE);
-            couponMinSubtotal = settingsDao.getBigDecimal(SettingsDao.COUPON_MIN_SUBTOTAL, AppConfig.COUPON_MIN_SUBTOTAL);
-
+            // Load loyalty settings (coupons are now loaded dynamically)
             loyaltyRate = settingsDao.getBigDecimal(SettingsDao.LOYALTY_RATE, AppConfig.LOYALTY_DISCOUNT_RATE);
-            loyaltyMinDeliveredOrders = settingsDao.getInt(SettingsDao.LOYALTY_MIN_DELIVERED_ORDERS, AppConfig.LOYALTY_MIN_DELIVERED_ORDERS);
+            loyaltyMinDeliveredOrders = settingsDao.getInt(SettingsDao.LOYALTY_MIN_DELIVERED_ORDERS,
+                    AppConfig.LOYALTY_MIN_DELIVERED_ORDERS);
 
             String u = SessionContext.username();
             deliveredOrdersSoFar = (u == null || u.isBlank()) ? 0 : orderDao.countDeliveredOrdersForCustomerUsername(u);
         } catch (Exception ex) {
             // Safe fallbacks
-            couponCode = AppConfig.COUPON_CODE;
-            couponRate = AppConfig.COUPON_DISCOUNT_RATE;
-            couponMinSubtotal = AppConfig.COUPON_MIN_SUBTOTAL;
             loyaltyRate = AppConfig.LOYALTY_DISCOUNT_RATE;
             loyaltyMinDeliveredOrders = AppConfig.LOYALTY_MIN_DELIVERED_ORDERS;
             deliveredOrdersSoFar = 0;
@@ -231,8 +256,9 @@ public final class CartController {
 
     private String buildRulesText() {
         return "Rules: Minimum subtotal = " + AppConfig.MIN_CART_SUBTOTAL
-                + " | Coupon: \"" + couponCode + "\" gives -" + couponRate.multiply(new BigDecimal("100")).stripTrailingZeros().toPlainString() + "% if subtotal >= " + couponMinSubtotal
-                + " | Loyalty: -" + loyaltyRate.multiply(new BigDecimal("100")).stripTrailingZeros().toPlainString() + "% if delivered orders >= " + loyaltyMinDeliveredOrders
+                + " | Enter any valid coupon code for a discount"
+                + " | Loyalty: -" + loyaltyRate.multiply(new BigDecimal("100")).stripTrailingZeros().toPlainString()
+                + "% if delivered orders >= " + loyaltyMinDeliveredOrders
                 + " (you have " + deliveredOrdersSoFar + ")";
     }
 
@@ -240,10 +266,16 @@ public final class CartController {
         BigDecimal subtotal = CartModel.get().subtotal();
 
         BigDecimal couponDiscount = BigDecimal.ZERO;
-        String coupon = Validators.normalize(couponField.getText());
-        if (!coupon.isEmpty() && couponCode != null && coupon.equalsIgnoreCase(couponCode)
-                && subtotal.compareTo(couponMinSubtotal) >= 0) {
-            couponDiscount = scale2(subtotal.multiply(couponRate));
+        String couponInput = Validators.normalize(couponField.getText());
+        if (!couponInput.isEmpty()) {
+            try {
+                Coupon found = couponDao.findByCode(couponInput);
+                if (found != null && subtotal.compareTo(found.minSubtotal()) >= 0) {
+                    couponDiscount = scale2(subtotal.multiply(found.rate()));
+                }
+            } catch (Exception ex) {
+                LOG.log(Level.WARNING, "Failed to lookup coupon for recalc", ex);
+            }
         }
 
         BigDecimal loyaltyDiscount = BigDecimal.ZERO;
@@ -261,7 +293,8 @@ public final class CartController {
 
         subtotalLabel.setText("Subtotal: " + Formatters.formatMoney(subtotal));
         discountLabel.setText("Discount: " + Formatters.formatMoney(discount)
-                + (discount.compareTo(BigDecimal.ZERO) > 0 ? " (coupon " + Formatters.formatMoney(couponDiscount) + " + loyalty " + Formatters.formatMoney(loyaltyDiscount) + ")" : ""));
+                + (discount.compareTo(BigDecimal.ZERO) > 0 ? " (coupon " + Formatters.formatMoney(couponDiscount)
+                        + " + loyalty " + Formatters.formatMoney(loyaltyDiscount) + ")" : ""));
         vatLabel.setText("VAT: " + Formatters.formatMoney(vat));
         totalLabel.setText("Total: " + Formatters.formatMoney(total));
 

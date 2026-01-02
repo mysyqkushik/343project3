@@ -18,13 +18,10 @@ public final class MainApp extends Application {
     public void start(Stage stage) {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             LOG.log(Level.SEVERE, "Uncaught error in thread " + t.getName(), e);
-            Platform.runLater(() ->
-                    Alerts.showError(
-                            "Unexpected Error",
-                            "The application hit an unexpected error but stayed alive.",
-                            e.getClass().getSimpleName() + ": " + e.getMessage()
-                    )
-            );
+            Platform.runLater(() -> Alerts.showError(
+                    "Unexpected Error",
+                    "The application hit an unexpected error but stayed alive.",
+                    e.getClass().getSimpleName() + ": " + e.getMessage()));
         });
 
         try {
@@ -33,14 +30,14 @@ public final class MainApp extends Application {
             new com.groupxx.greengrocer.dao.ProductDao().ensureProductTableAndSeed();
             new com.groupxx.greengrocer.dao.OrderDao().ensureOrderTables();
             new com.groupxx.greengrocer.dao.SettingsDao().ensureSettingsTableAndSeedDefaults();
+            new com.groupxx.greengrocer.dao.CouponDao().ensureTableAndSeedDefaults();
             new com.groupxx.greengrocer.dao.MessageDao().ensureMessageTable();
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Database initialization failed", ex);
             Alerts.showError(
                     "Database Connection Failed",
                     "Cannot connect to the database or initialize schema.",
-                    ex.getMessage() + "\n\nPlease verify MySQL is running and the credentials are correct."
-            );
+                    ex.getMessage() + "\n\nPlease verify MySQL is running and the credentials are correct.");
             Platform.exit();
             return;
         }

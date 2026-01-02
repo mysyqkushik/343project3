@@ -12,46 +12,69 @@
         <HBox spacing="10" alignment="CENTER_LEFT">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
             <children>
-                <Label text="Discounts &amp; Loyalty" style="-fx-font-weight: bold;"/>
+                <Label text="Discounts &amp; Loyalty" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Button text="Reload" onAction="#onReload"/>
-                <Button text="Save" onAction="#onSave"/>
+                <Button text="Refresh All" onAction="#onReload"/>
             </children>
         </HBox>
     </top>
 
     <center>
-        <GridPane hgap="10" vgap="10">
+        <VBox spacing="20">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <columnConstraints>
-                <ColumnConstraints minWidth="200" halignment="RIGHT"/>
-                <ColumnConstraints hgrow="ALWAYS"/>
-            </columnConstraints>
 
-            <children>
-                <Label text="Coupon code" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="couponCodeField" promptText="e.g., SAVE10" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <!-- Coupons Section -->
+            <VBox spacing="10">
+                <Label text="Coupons" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
-                <Label text="Coupon discount rate" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="couponRateField" promptText="e.g., 0.10 or 10" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <TableView fx:id="couponTable" prefHeight="150">
+                    <columns>
+                        <TableColumn fx:id="colCode" text="Code" prefWidth="120"/>
+                        <TableColumn fx:id="colRate" text="Rate" prefWidth="80"/>
+                        <TableColumn fx:id="colMinSubtotal" text="Min Subtotal" prefWidth="100"/>
+                    </columns>
+                </TableView>
 
-                <Label text="Coupon min subtotal" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="couponMinSubtotalField" promptText="e.g., 200.00" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="newCouponCodeField" promptText="Code (e.g., SAVE10)" prefWidth="120"/>
+                    <TextField fx:id="newCouponRateField" promptText="Rate (e.g., 10 or 0.10)" prefWidth="120"/>
+                    <TextField fx:id="newCouponMinSubtotalField" promptText="Min Subtotal (e.g., 200)" prefWidth="120"/>
+                    <Button text="Add/Update" onAction="#onAddCoupon"/>
+                    <Button text="Delete Selected" onAction="#onDeleteCoupon"/>
+                </HBox>
 
-                <Separator GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                <Label wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: gray;"
+                       text="Rate can be decimal (0.10) or percentage (10). Coupon applies if code matches and subtotal >= min."/>
+            </VBox>
 
-                <Label text="Loyalty discount rate" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="loyaltyRateField" promptText="e.g., 0.05 or 5" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            <Separator/>
 
-                <Label text="Loyalty min delivered orders" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                <TextField fx:id="loyaltyMinDeliveredField" promptText="e.g., 5" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            <!-- Loyalty Section -->
+            <VBox spacing="10">
+                <Label text="Loyalty Discount" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
-                <Label text="Notes" style="-fx-font-weight: bold;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                <Label wrapText="true"
-                       text="Rates can be typed as decimals (0.10) or as percentages (10). Coupon applies only if code matches and subtotal >= min. Loyalty applies only if delivered orders >= min."
-                       GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-            </children>
-        </GridPane>
+                <GridPane hgap="10" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="180" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS" prefWidth="200"/>
+                    </columnConstraints>
+
+                    <Label text="Loyalty discount rate" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="loyaltyRateField" promptText="e.g., 0.05 or 5" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Min delivered orders" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="loyaltyMinDeliveredField" promptText="e.g., 5" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <HBox spacing="10">
+                    <Button text="Save Loyalty Settings" onAction="#onSaveLoyalty"/>
+                </HBox>
+
+                <Label wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: gray;"
+                       text="Loyalty discount applies if customer has delivered orders >= min."/>
+            </VBox>
+
+        </VBox>
     </center>
 
 </BorderPane>

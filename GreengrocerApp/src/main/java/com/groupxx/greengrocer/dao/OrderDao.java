@@ -5,6 +5,7 @@ import com.groupxx.greengrocer.db.DbAdapter;
 import com.groupxx.greengrocer.util.InvoicePdfGenerator;
 import com.groupxx.greengrocer.dao.SettingsDao;
 import com.groupxx.greengrocer.model.CartLine;
+import com.groupxx.greengrocer.model.Coupon;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -130,25 +131,25 @@ public final class OrderDao {
                 BigDecimal subtotal = scale2(
                         lines.stream().map(CartLine::lineTotal).reduce(BigDecimal.ZERO, BigDecimal::add));
 
-                // Read discounts from settings (owner-editable). Fallback to AppConfig
-                // defaults.
-                String couponCode = settingsGetString(c, SettingsDao.COUPON_CODE, AppConfig.COUPON_CODE);
-                BigDecimal couponRate = settingsGetDecimal(c, SettingsDao.COUPON_RATE, AppConfig.COUPON_DISCOUNT_RATE);
-                BigDecimal couponMin = settingsGetDecimal(c, SettingsDao.COUPON_MIN_SUBTOTAL,
-                        AppConfig.COUPON_MIN_SUBTOTAL);
-
-                BigDecimal loyaltyRate = settingsGetDecimal(c, SettingsDao.LOYALTY_RATE, new BigDecimal("0.00"));
-                int loyaltyMinDelivered = settingsGetInt(c, SettingsDao.LOYALTY_MIN_DELIVERED_ORDERS, 0);
-
+                // Read discounts from coupons table (owner-editable). Use CouponDao for lookup.
+                CouponDao couponDao = new CouponDao();
                 String coupon = (couponCodeOrNull == null || couponCodeOrNull.isBlank()) ? null
                         : couponCodeOrNull.trim();
 
                 BigDecimal couponDiscount = BigDecimal.ZERO;
-                if (coupon != null && couponCode != null
-                        && coupon.equalsIgnoreCase(couponCode)
-                        && subtotal.compareTo(couponMin) >= 0) {
-                    couponDiscount = scale2(subtotal.multiply(couponRate));
+                if (coupon != null) {
+                    try {
+                        Coupon foundCoupon = couponDao.findByCode(coupon);
+                        if (foundCoupon != null && subtotal.compareTo(foundCoupon.minSubtotal()) >= 0) {
+                            couponDiscount = scale2(subtotal.multiply(foundCoupon.rate()));
+                        }
+                    } catch (Exception couponEx) {
+                        LOG.log(Level.WARNING, "Failed to lookup coupon: " + coupon, couponEx);
+                    }
                 }
+
+                BigDecimal loyaltyRate = settingsGetDecimal(c, SettingsDao.LOYALTY_RATE, new BigDecimal("0.00"));
+                int loyaltyMinDelivered = settingsGetInt(c, SettingsDao.LOYALTY_MIN_DELIVERED_ORDERS, 0);
 
                 int deliveredCount = countDeliveredOrdersForCustomerId(c, customerId);
                 BigDecimal loyaltyDiscount = BigDecimal.ZERO;
