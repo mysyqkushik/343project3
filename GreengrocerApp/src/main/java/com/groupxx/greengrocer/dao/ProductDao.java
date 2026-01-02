@@ -17,6 +17,9 @@ import java.util.List;
 
 public final class ProductDao {
 
+    // Hardcoded path as requested by user
+    private static final String IMAGE_BASE_PATH = "C:\\Users\\kuand\\Documents\\GitHub\\343project3\\GreengrocerApp\\src\\main\\java\\com\\groupxx\\greengrocer\\public\\images\\";
+
     public void ensureProductTableAndSeed() throws Exception {
         try (Connection c = DbAdapter.getInstance().getConnection()) {
             try (PreparedStatement ps = c.prepareStatement("""
@@ -35,40 +38,68 @@ public final class ProductDao {
                 ps.execute();
             }
 
-            // If already seeded, do nothing
-            if (countProducts(c) >= 24)
-                return;
-
-            byte[] placeholder = makePlaceholderPng();
+            // Always update standard products to ensure images are fresh
+            // if (countProducts(c) >= 24) return;
 
             // 12 Vegetables
-            insert(c, "Carrot", ProductCategory.VEGETABLE, "55.00", "40.00", "5.00", placeholder);
-            insert(c, "Cucumber", ProductCategory.VEGETABLE, "45.00", "40.00", "5.00", placeholder);
-            insert(c, "Eggplant", ProductCategory.VEGETABLE, "70.00", "35.00", "5.00", placeholder);
-            insert(c, "Garlic", ProductCategory.VEGETABLE, "120.00", "20.00", "3.00", placeholder);
-            insert(c, "Lettuce", ProductCategory.VEGETABLE, "35.00", "25.00", "3.00", placeholder);
-            insert(c, "Onion", ProductCategory.VEGETABLE, "40.00", "50.00", "5.00", placeholder);
-            insert(c, "Pepper", ProductCategory.VEGETABLE, "75.00", "30.00", "5.00", placeholder);
-            insert(c, "Potato", ProductCategory.VEGETABLE, "30.00", "80.00", "8.00", placeholder);
-            insert(c, "Spinach", ProductCategory.VEGETABLE, "60.00", "25.00", "4.00", placeholder);
-            insert(c, "Tomato", ProductCategory.VEGETABLE, "50.00", "45.00", "5.00", placeholder);
-            insert(c, "Zucchini", ProductCategory.VEGETABLE, "55.00", "30.00", "5.00", placeholder);
-            insert(c, "Broccoli", ProductCategory.VEGETABLE, "95.00", "20.00", "3.00", placeholder);
+            seed(c, "Carrot", ProductCategory.VEGETABLE, "55.00", "40.00", "5.00");
+            seed(c, "Cucumber", ProductCategory.VEGETABLE, "45.00", "40.00", "5.00");
+            seed(c, "Eggplant", ProductCategory.VEGETABLE, "70.00", "35.00", "5.00");
+            seed(c, "Garlic", ProductCategory.VEGETABLE, "120.00", "20.00", "3.00");
+            seed(c, "Lettuce", ProductCategory.VEGETABLE, "35.00", "25.00", "3.00");
+            seed(c, "Onion", ProductCategory.VEGETABLE, "40.00", "50.00", "5.00");
+            seed(c, "Pepper", ProductCategory.VEGETABLE, "75.00", "30.00", "5.00");
+            seed(c, "Potato", ProductCategory.VEGETABLE, "30.00", "80.00", "8.00");
+            seed(c, "Spinach", ProductCategory.VEGETABLE, "60.00", "25.00", "4.00");
+            seed(c, "Tomato", ProductCategory.VEGETABLE, "50.00", "45.00", "5.00");
+            seed(c, "Zucchini", ProductCategory.VEGETABLE, "55.00", "30.00", "5.00");
+            seed(c, "Broccoli", ProductCategory.VEGETABLE, "95.00", "20.00", "3.00");
 
             // 12 Fruits
-            insert(c, "Apple", ProductCategory.FRUIT, "60.00", "50.00", "5.00", placeholder);
-            insert(c, "Banana", ProductCategory.FRUIT, "65.00", "45.00", "5.00", placeholder);
-            insert(c, "Cherry", ProductCategory.FRUIT, "180.00", "15.00", "2.00", placeholder);
-            insert(c, "Grapes", ProductCategory.FRUIT, "110.00", "20.00", "3.00", placeholder);
-            insert(c, "Kiwi", ProductCategory.FRUIT, "140.00", "18.00", "3.00", placeholder);
-            insert(c, "Lemon", ProductCategory.FRUIT, "55.00", "30.00", "4.00", placeholder);
-            insert(c, "Mango", ProductCategory.FRUIT, "160.00", "12.00", "2.00", placeholder);
-            insert(c, "Orange", ProductCategory.FRUIT, "58.00", "40.00", "5.00", placeholder);
-            insert(c, "Peach", ProductCategory.FRUIT, "120.00", "18.00", "3.00", placeholder);
-            insert(c, "Pear", ProductCategory.FRUIT, "75.00", "30.00", "4.00", placeholder);
-            insert(c, "Pineapple", ProductCategory.FRUIT, "150.00", "10.00", "2.00", placeholder);
-            insert(c, "Strawberry", ProductCategory.FRUIT, "190.00", "12.00", "2.00", placeholder);
+            seed(c, "Apple", ProductCategory.FRUIT, "60.00", "50.00", "5.00");
+            seed(c, "Banana", ProductCategory.FRUIT, "65.00", "45.00", "5.00");
+            seed(c, "Cherry", ProductCategory.FRUIT, "180.00", "15.00", "2.00");
+            seed(c, "Grapes", ProductCategory.FRUIT, "110.00", "20.00", "3.00");
+            seed(c, "Kiwi", ProductCategory.FRUIT, "140.00", "18.00", "3.00");
+            seed(c, "Lemon", ProductCategory.FRUIT, "55.00", "30.00", "4.00");
+            seed(c, "Mango", ProductCategory.FRUIT, "160.00", "12.00", "2.00");
+            seed(c, "Orange", ProductCategory.FRUIT, "58.00", "40.00", "5.00");
+            seed(c, "Peach", ProductCategory.FRUIT, "120.00", "18.00", "3.00");
+            seed(c, "Pear", ProductCategory.FRUIT, "75.00", "30.00", "4.00");
+            seed(c, "Pineapple", ProductCategory.FRUIT, "150.00", "10.00", "2.00");
+            seed(c, "Strawberry", ProductCategory.FRUIT, "190.00", "12.00", "2.00");
         }
+    }
+
+    private void seed(Connection c, String name, ProductCategory cat, String price, String stock, String threshold)
+            throws Exception {
+        byte[] img = readImage(cat, name);
+        if (img == null) {
+            img = makePlaceholderPng(); // Fallback
+        }
+        insert(c, name, cat, price, stock, threshold, img);
+    }
+
+    private byte[] readImage(ProductCategory cat, String name) {
+        try {
+            // Folder: Vegetables or Fruits (plural, capitalized)
+            String subDir = (cat == ProductCategory.VEGETABLE) ? "Vegetables" : "Fruits";
+            // File: lowercase name .png (e.g. carrot.png)
+            // Handle edge case: "Grapes" -> "grape.png" ? List showed "grape.png".
+            String filename = name.toLowerCase();
+            if (filename.equals("grapes"))
+                filename = "grape";
+
+            java.nio.file.Path path = java.nio.file.Path.of(IMAGE_BASE_PATH, subDir, filename + ".png");
+            if (java.nio.file.Files.exists(path)) {
+                return java.nio.file.Files.readAllBytes(path);
+            } else {
+                System.err.println("Image not found: " + path.toAbsolutePath());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public List<ProductRecord> fetchAllActiveSorted() throws Exception {
@@ -218,7 +249,7 @@ public final class ProductDao {
         try (PreparedStatement ps = c.prepareStatement("""
                 INSERT INTO product_info (name, category, price_per_kg, stock_kg, threshold_kg, image_blob, active)
                 VALUES (?, ?, ?, ?, ?, ?, TRUE)
-                ON DUPLICATE KEY UPDATE name=name
+                ON DUPLICATE KEY UPDATE image_blob=VALUES(image_blob)
                 """)) {
             ps.setString(1, name);
             ps.setString(2, cat.name());
