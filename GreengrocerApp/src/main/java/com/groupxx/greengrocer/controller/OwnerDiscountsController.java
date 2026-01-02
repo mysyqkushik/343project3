@@ -54,6 +54,10 @@ public final class OwnerDiscountsController {
     private final CouponDao couponDao = new CouponDao();
     private final SettingsDao settingsDao = new SettingsDao();
 
+    /**
+     * Initializes the controller.
+     * Sets up the coupon table and loads initial settings.
+     */
     @FXML
     public void initialize() {
         colCode.setCellValueFactory(v -> new SimpleStringProperty(v.getValue().code()));
@@ -102,6 +106,10 @@ public final class OwnerDiscountsController {
         }
     }
 
+    /**
+     * Creates or updates a coupon based on input fields.
+     * Validates rate (0-1) and minimum subtotal.
+     */
     @FXML
     public void onAddCoupon() {
         try {
@@ -152,6 +160,9 @@ public final class OwnerDiscountsController {
         }
     }
 
+    /**
+     * Saves global loyalty program settings (rate and threshold).
+     */
     @FXML
     public void onSaveLoyalty() {
         try {

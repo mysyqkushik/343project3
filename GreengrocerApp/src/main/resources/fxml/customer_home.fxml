@@ -4,80 +4,84 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.CustomerHomeController">
+<VBox xmlns="http://javafx.com/javafx" 
+      xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="com.groupxx.greengrocer.controller.CustomerHomeController"
+      stylesheets="@../css/app.css"
+      style="-fx-background-color: -fx-background;">
 
-    <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-
-            <children>
-                <Pane HBox.hgrow="ALWAYS"/>
-                <Label text="User:"/>
-                <Label fx:id="usernameLabel"/>
-                <Button text="Orders" onAction="#onOpenOrders"/>
-                <Button text="Messages" onAction="#onOpenMessages"/>
-                <Button text="Profile" onAction="#onOpenProfile"/>
-                <Button fx:id="cartButton" text="Cart" onAction="#onOpenCart"/>
-                <Button text="Logout" onAction="#onLogout"/>
-            </children>
+    <!-- Top Bar -->
+    <HBox spacing="16" alignment="CENTER_LEFT" styleClass="top-bar">
+        <Label text="Greengrocer" styleClass="headline-medium"/>
+        <HBox spacing="16" alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER_RIGHT" spacing="2">
+                 <Label text="Welcome," styleClass="label-medium" style="-fx-text-fill: -fx-text-secondary;"/>
+                 <Label fx:id="usernameLabel" styleClass="display-small"/>
+            </VBox>
+            <StackPane styleClass="avatar-container" prefWidth="56" prefHeight="56" minWidth="56" minHeight="56" maxWidth="56" maxHeight="56">
+                <!-- Strict Circular Clip -->
+                <clip>
+                    <javafx.scene.shape.Circle radius="28" centerX="28" centerY="28"/>
+                </clip>
+                <Region styleClass="avatar-bg"/> <!-- Background placeholder -->
+                <Region styleClass="avatar-icon"/> 
+            </StackPane>
         </HBox>
-    </top>
+        
+        <Button text="Sign Out" onAction="#onLogout" styleClass="button"/>
+    </HBox>
 
-    <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
+    <!-- Navigation Bar -->
+    <ScrollPane fitToHeight="true" vbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-padding: 0;">
+        <content>
+            <HBox spacing="8" style="-fx-padding: 8px 16px;">
+                <Button text="All Products" styleClass="button-primary"/> <!-- Visual marker only -->
+                <Button text="My Orders" onAction="#onOpenOrders" styleClass="button"/>
+                <Button text="Messages" onAction="#onOpenMessages" styleClass="button"/>
+                <Button text="Profile" onAction="#onOpenProfile" styleClass="button"/>
+                <Region prefWidth="16"/>
+                <Button fx:id="cartButton" text="Shopping Cart" onAction="#onOpenCart" styleClass="button-primary"/>
+            </HBox>
+        </content>
+    </ScrollPane>
 
-            <children>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <children>
-                        <Label text="Search:"/>
-                        <TextField fx:id="searchField" promptText="Name..." prefWidth="150"/>
-                        <Label text="Sort By:"/>
-                        <ComboBox fx:id="sortCombo" prefWidth="160"/>
-                        <Button text="Clear" onAction="#onClearSearch"/>
-                    </children>
-                </HBox>
+    <!-- Main Content -->
+    <VBox spacing="16" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="16" right="24" bottom="16" left="24"/>
+        </padding>
 
-                <TabPane fx:id="productsTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                    <tabs>
-                        <Tab text="Vegetables">
-                            <content>
-                                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-                                    <content>
-                                        <FlowPane fx:id="vegetablesFlow" hgap="15" vgap="15">
-                                            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                                        </FlowPane>
-                                    </content>
-                                </ScrollPane>
-                            </content>
-                        </Tab>
-                        <Tab text="Fruits">
-                            <content>
-                                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-                                    <content>
-                                        <FlowPane fx:id="fruitsFlow" hgap="15" vgap="15">
-                                            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-                                        </FlowPane>
-                                    </content>
-                                </ScrollPane>
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
+        <!-- Search & Filter -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <TextField fx:id="searchField" promptText="Search products..." HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="sortCombo" promptText="Sort By" prefWidth="300"/>
+            <Button text="Clear" onAction="#onClearSearch" styleClass="button"/>
+        </HBox>
 
-                <Label fx:id="statusLabel"/>
-            </children>
-        </VBox>
-    </center>
+        <!-- Products Tabs -->
+        <TabPane fx:id="productsTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab text="Vegetables">
+                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;">
+                        <content>
+                            <FlowPane fx:id="vegetablesFlow" hgap="16" vgap="16" alignment="TOP_LEFT">
+                                <padding><Insets top="16" bottom="16" left="4" right="4"/></padding>
+                            </FlowPane>
+                        </content>
+                    </ScrollPane>
+                </Tab>
+                <Tab text="Fruits">
+                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;">
+                        <content>
+                            <FlowPane fx:id="fruitsFlow" hgap="16" vgap="16" alignment="TOP_LEFT">
+                                <padding><Insets top="16" bottom="16" left="4" right="4"/></padding>
+                            </FlowPane>
+                        </content>
+                    </ScrollPane>
+                </Tab>
+            </tabs>
+        </TabPane>
 
-    <padding>
-        <Insets top="12" right="12" bottom="12" left="12"/>
-    </padding>
-
-</BorderPane>
+        <Label fx:id="statusLabel" styleClass="status" wrapText="true"/>
+    </VBox>
+</VBox>

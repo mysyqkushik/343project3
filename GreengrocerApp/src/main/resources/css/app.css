@@ -1,5 +1,459 @@
-.root { -fx-font-size: 14px; }
-.title { -fx-font-size: 22px; -fx-font-weight: bold; }
-.subtitle { -fx-font-size: 13px; -fx-opacity: 0.75; }
-.status { -fx-text-fill: #b00020; }
-.mono { -fx-font-family: "Consolas"; }
+/*
+ * GreengrocerApp - Material Design 3 Light Theme (Strict Compatibility)
+ * 
+ * DESIGN TOKENS:
+ * - Surface: #FFFFFF (Cards), #F9FAFB (Background - Cool Neutral)
+ * - Primary: #476810 (Calm Olive Green - Nature inspired, muted)
+ * - Secondary: #5E6044 (Muted Earthy)
+ * - Radius: 12px (Small), 16px (Medium/Cards), 20px (Large)
+ * - Spacing: 8dp grid
+ */
+
+.root {
+    /* --- COLOR PALETTE (Material 3 derived - Vibrant) --- */
+
+    /* Primary (Vibrant Green) */
+    -fx-primary: #188038;
+    /* Google Greenish - High Saturation */
+    /* Vibrant bright container */
+    -fx-primary-container: #DCF8C6;
+    /* Green 90 */
+    -fx-on-primary: #FFFFFF;
+    -fx-on-primary-container: #002105;
+
+    /* Secondary */
+    -fx-secondary: #006C4C;
+    /* Teal Green */
+    -fx-secondary-container: #89F8C7;
+    -fx-on-secondary-container: #002114;
+
+    /* Surfaces */
+    -fx-background: #FFFFFF;
+    /* Pure White */
+    -fx-surface: #FFFFFF;
+    /* Cool Minty Variant for backgrounds */
+    -fx-surface-variant: #F1F8E9;
+    /* Light Green 50 */
+
+    /* Outlines */
+    -fx-outline: #72796F;
+    -fx-outline-variant: #C2C8BC;
+
+    /* Text */
+    -fx-text-primary: #1A1C18;
+    -fx-text-secondary: #43473E;
+
+    /* Error */
+    -fx-error: #BA1A1A;
+    -fx-error-container: #FFDAD6;
+    -fx-on-error: #FFFFFF;
+
+    /* --- GLOBAL SETTINGS --- */
+    -fx-font-family: "Roboto", "Segoe UI", "Inter", system-ui, sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-text-primary;
+    -fx-background-color: -fx-background;
+}
+
+/* ==============================================
+   TYPOGRAPHY
+   ============================================== */
+.display-large {
+    -fx-font-size: 57px;
+    -fx-font-weight: bold;
+}
+
+.display-small {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.headline-large {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+.headline-medium {
+    -fx-font-size: 24px;
+    -fx-font-weight: normal;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.title-large {
+    -fx-font-size: 22px;
+    -fx-font-weight: 500;
+}
+
+.title-medium {
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-letter-spacing: 0.15px;
+}
+
+.body-large {
+    -fx-font-size: 16px;
+}
+
+.label-large {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.caption {
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-text-secondary;
+}
+
+/* ==============================================
+   CARDS & CONTAINERS
+   ============================================== */
+.card {
+    -fx-background-color: -fx-surface;
+    -fx-background-radius: 16px;
+    /* 12-16px per rule */
+    -fx-border-radius: 16px;
+    -fx-border-color: transparent;
+    /* Subtle elevation: Y=1px, Blur=3px */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 4, 0, 1, 1);
+    -fx-padding: 24px;
+}
+
+.top-bar {
+    -fx-background-color: -fx-surface;
+    /* or -fx-surface */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.03), 4, 0, 0, 1);
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 0 0 16px 16px;
+    /* Optional rounding at bottom */
+}
+
+/* ==============================================
+   PRODUCT CARDS (Dynamic)
+   ============================================== */
+.product-card {
+    -fx-background-color: -fx-surface;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: -fx-outline-variant;
+    -fx-border-width: 1px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 4, 0, 0, 2);
+}
+
+.product-name {
+    -fx-font-family: "System Bold", "Roboto Medium";
+    -fx-font-size: 18px;
+    /* Larger and Prominent */
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.product-price {
+    -fx-font-size: 15px;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.product-min-order {
+    -fx-font-size: 15px;
+    /* Slightly larger than normal 14px */
+    -fx-text-fill: -fx-secondary;
+}
+
+.product-stock {
+    -fx-font-size: 13px;
+    -fx-text-fill: -fx-secondary;
+}
+
+.product-stock-low {
+    -fx-font-size: 13px;
+    -fx-text-fill: #B96601;
+    /* Warning Orange */
+    -fx-font-weight: bold;
+}
+
+.product-stock-empty {
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-error;
+    -fx-font-weight: bold;
+    -fx-text-transform: uppercase;
+}
+
+/* ==============================================
+   BUTTONS
+   ============================================== */
+.button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-primary;
+    -fx-font-family: "System Bold", "Roboto Medium";
+    -fx-font-weight: 600;
+    -fx-padding: 10px 24px;
+    -fx-background-radius: 12px;
+    /* 8-12px per rule */
+    -fx-border-radius: 12px;
+    -fx-border-color: -fx-outline-variant;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+    /* Prevent button from shrinking smaller than its content */
+    -fx-min-width: -fx-pref-width;
+}
+
+.button:hover {
+    -fx-background-color: rgba(56, 106, 32, 0.08);
+    /* Primary opacity */
+    -fx-border-color: -fx-primary;
+}
+
+.button:pressed {
+    -fx-background-color: rgba(56, 106, 32, 0.12);
+}
+
+/* Primary (Filled) Button */
+.button-primary {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-on-primary;
+    -fx-border-color: transparent;
+    /* Text/Icon buttons don't usually have heavy shadows in MD3, but subtle is allowed */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0, 0, 1);
+    /* Prevent button from shrinking smaller than its content */
+    -fx-min-width: -fx-pref-width;
+}
+
+.button-primary:hover {
+    -fx-background-color: #2D5618;
+    /* Darker shade of primary #386A20 */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 3, 0, 0, 1);
+}
+
+/* Danger Button */
+.button-danger {
+    -fx-text-fill: -fx-error;
+    -fx-border-color: -fx-error;
+    -fx-background-color: transparent;
+}
+
+.button-danger:hover {
+    -fx-background-color: -fx-error-container;
+    -fx-text-fill: -fx-on-error-container;
+}
+
+/* ==============================================
+   INPUTS (TextField, TextArea, ComboBox)
+   ============================================== */
+.text-field,
+.password-field,
+.text-area,
+.combo-box,
+.date-picker {
+    -fx-background-color: -fx-surface;
+    -fx-text-fill: -fx-text-primary;
+    -fx-prompt-text-fill: -fx-text-secondary;
+    /* Lighter text for placeholder */
+    -fx-border-color: -fx-outline;
+    -fx-border-radius: 8px;
+    /* 8-12px per rule */
+    -fx-background-radius: 8px;
+    -fx-padding: 12px 16px;
+    /* Generous padding */
+}
+
+/* Focus State - Thick outline */
+.text-field:focused,
+.password-field:focused,
+.text-area:focused,
+.combo-box:focused,
+.date-picker:focused {
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+    -fx-padding: 11px 15px;
+    /* Compensate for border width */
+}
+
+.text-field:hover,
+.password-field:hover {
+    -fx-border-color: -fx-text-primary;
+}
+
+-fx-border-color: -fx-text-primary;
+}
+
+/* Remove default focus ring from Tabs */
+.tab-pane:focused>.tab-header-area>.headers-region>.tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.tab:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ==============================================
+   DATA TABLES
+   ============================================== */
+.table-view {
+    -fx-background-color: -fx-surface;
+    -fx-border-color: transparent;
+    /* Cleaner look */
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: none;
+    /* Flat inside cards usually */
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -fx-surface-variant;
+    -fx-background-radius: 12px 12px 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 16px 12px;
+}
+
+.table-view .column-header .label {
+    -fx-font-weight: 600;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-family: "Roboto Medium";
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12px;
+    -fx-text-fill: -fx-text-primary;
+    -fx-border-color: transparent transparent -fx-surface-variant transparent;
+    /* Row lines */
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: -fx-surface;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #FAFCF8;
+    /* Extremely subtle tint */
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: -fx-secondary-container;
+    -fx-text-fill: -fx-on-secondary-container;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #F0F2EB;
+}
+
+/* ==============================================
+   TABS
+   ============================================== */
+.tab-pane .tab-header-area {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.tab {
+    -fx-background-color: transparent;
+    -fx-padding: 12px 24px;
+    -fx-border-color: transparent transparent transparent transparent;
+}
+
+.tab:selected {
+    -fx-border-color: transparent transparent -fx-primary transparent;
+    -fx-border-width: 3px;
+}
+
+.tab .tab-label {
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-weight: 600;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: -fx-primary;
+}
+
+/* ==============================================
+   SCROLL PANE
+   ============================================== */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -fx-outline-variant;
+    -fx-background-radius: 4px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -fx-outline;
+}
+
+/* ==============================================
+   CHARTS
+   ============================================== */
+.chart {
+    -fx-padding: 16px;
+}
+
+.chart-content {
+    -fx-padding: 10px;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 3px;
+    -fx-stroke: -fx-primary;
+}
+
+.chart-line-symbol {
+    -fx-background-color: -fx-primary;
+}
+
+.axis {
+    -fx-tick-label-fill: -fx-text-secondary;
+}
+
+.axis-label {
+    -fx-text-fill: -fx-text-secondary;
+}
+
+/* ==============================================
+   AVATAR
+   ============================================== */
+.avatar-container {
+    -fx-background-color: transparent;
+    /* Background handled by internal region */
+    -fx-alignment: CENTER;
+}
+
+.avatar-bg {
+    -fx-background-color: -fx-surface-variant;
+    -fx-pref-width: 56px;
+    -fx-pref-height: 56px;
+}
+
+.avatar-icon {
+    -fx-background-color: -fx-text-secondary;
+    -fx-min-width: 32px;
+    /* Scaled up icon */
+    -fx-min-height: 32px;
+    -fx-max-width: 32px;
+    -fx-max-height: 32px;
+    -fx-shape: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
+}

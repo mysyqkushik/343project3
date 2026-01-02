@@ -4,77 +4,72 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.OwnerDiscountsController">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.groupxx.greengrocer.controller.OwnerDiscountsController"
+      stylesheets="@../css/app.css"
+      style="-fx-background-color: -fx-background;"
+      spacing="16">
 
-    <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <children>
-                <Label text="Discounts &amp; Loyalty" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-                <Pane HBox.hgrow="ALWAYS"/>
-                <Button text="Refresh All" onAction="#onReload"/>
-            </children>
-        </HBox>
-    </top>
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+    
+    <HBox spacing="16" alignment="CENTER_LEFT">
+        <Label text="Discounts &amp; Loyalty" styleClass="headline-medium"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Reload All" onAction="#onReload" styleClass="button"/>
+    </HBox>
 
-    <center>
-        <VBox spacing="20">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.6" orientation="VERTICAL">
+        <items>
             <!-- Coupons Section -->
-            <VBox spacing="10">
-                <Label text="Coupons" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-
-                <TableView fx:id="couponTable" prefHeight="150">
+            <VBox spacing="12">
+                <Label text="Active Coupons" styleClass="title-medium"/>
+                
+                <TableView fx:id="couponTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                     <columns>
-                        <TableColumn fx:id="colCode" text="Code" prefWidth="120"/>
-                        <TableColumn fx:id="colRate" text="Rate" prefWidth="80"/>
-                        <TableColumn fx:id="colMinSubtotal" text="Min Subtotal" prefWidth="100"/>
+                        <TableColumn fx:id="colCode" text="Code"/>
+                        <TableColumn fx:id="colRate" text="Rate"/>
+                        <TableColumn fx:id="colMinSubtotal" text="Min Subtotal"/>
                     </columns>
                 </TableView>
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="newCouponCodeField" promptText="Code (e.g., SAVE10)" prefWidth="120"/>
-                    <TextField fx:id="newCouponRateField" promptText="Rate (e.g., 10 or 0.10)" prefWidth="120"/>
-                    <TextField fx:id="newCouponMinSubtotalField" promptText="Min Subtotal (e.g., 200)" prefWidth="120"/>
-                    <Button text="Add/Update" onAction="#onAddCoupon"/>
-                    <Button text="Delete Selected" onAction="#onDeleteCoupon"/>
-                </HBox>
-
-                <Label wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: gray;"
-                       text="Rate can be decimal (0.10) or percentage (10). Coupon applies if code matches and subtotal >= min."/>
+                <FlowPane hgap="12" vgap="12" alignment="CENTER_LEFT">
+                     <TextField fx:id="newCouponCodeField" promptText="CODE"/>
+                     <TextField fx:id="newCouponRateField" promptText="Rate (0.10 or 10)"/>
+                     <TextField fx:id="newCouponMinSubtotalField" promptText="Min Subtotal"/>
+                     <Button text="Create/Update" onAction="#onAddCoupon" styleClass="button-primary"/>
+                     <Button text="Delete Selected" onAction="#onDeleteCoupon" styleClass="button-danger"/>
+                </FlowPane>
+                <Label text="Info: Rate &lt; 1 is decimal (0.1 = 10%), &gt; 1 is percentage (10 = 10%)." styleClass="caption"/>
             </VBox>
-
-            <Separator/>
 
             <!-- Loyalty Section -->
-            <VBox spacing="10">
-                <Label text="Loyalty Discount" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-
-                <GridPane hgap="10" vgap="10">
-                    <columnConstraints>
-                        <ColumnConstraints minWidth="180" halignment="RIGHT"/>
-                        <ColumnConstraints hgrow="ALWAYS" prefWidth="200"/>
-                    </columnConstraints>
-
-                    <Label text="Loyalty discount rate" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="loyaltyRateField" promptText="e.g., 0.05 or 5" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                    <Label text="Min delivered orders" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <TextField fx:id="loyaltyMinDeliveredField" promptText="e.g., 5" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <VBox spacing="16" styleClass="card">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <Label text="Loyalty Program Settings" styleClass="title-large"/>
+                <Separator/>
+                
+                <GridPane hgap="16" vgap="16">
+                     <columnConstraints>
+                         <ColumnConstraints minWidth="120" halignment="RIGHT"/>
+                         <ColumnConstraints hgrow="ALWAYS" maxWidth="300"/>
+                     </columnConstraints>
+                     
+                     <Label text="Discount Rate" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label-large"/>
+                     <TextField fx:id="loyaltyRateField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                     
+                     <Label text="Min Orders" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label-large"/>
+                     <TextField fx:id="loyaltyMinDeliveredField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
                 </GridPane>
-
-                <HBox spacing="10">
-                    <Button text="Save Loyalty Settings" onAction="#onSaveLoyalty"/>
+                
+                <HBox spacing="16">
+                    <Button text="Save Settings" onAction="#onSaveLoyalty" styleClass="button-primary"/>
                 </HBox>
-
-                <Label wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: gray;"
-                       text="Loyalty discount applies if customer has delivered orders >= min."/>
+                
+                <Label text="Applies automatically when a customer has enough delivered orders." styleClass="caption"/>
             </VBox>
-
-        </VBox>
-    </center>
-
-</BorderPane>
+        </items>
+    </SplitPane>
+</VBox>

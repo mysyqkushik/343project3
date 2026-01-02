@@ -4,47 +4,51 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.OwnerCarriersController">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.groupxx.greengrocer.controller.OwnerCarriersController"
+      stylesheets="@../css/app.css"
+      spacing="16">
 
-    <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <Button text="Add Carrier" onAction="#onAddCarrier"/>
-            <Button text="Delete Selected" onAction="#onDeleteCarrier"
-                    style="-fx-background-color: #b00020; -fx-text-fill: white;"/>
-            <Button text="Toggle Active" onAction="#onToggleActive"/>
-            <Button text="Refresh" onAction="#onRefresh"/>
-        </HBox>
-    </top>
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
-    <center>
-        <VBox spacing="10">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+    <!-- Toolbar -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+         <Button text="Add Carrier" onAction="#onAddCarrier" styleClass="button-primary"/>
+         <Button text="Delete Selected" onAction="#onDeleteCarrier" styleClass="button-danger"/>
+         <Button text="Toggle Active" onAction="#onToggleActive" styleClass="button"/>
+         <Region HBox.hgrow="ALWAYS"/>
+         <Button text="Refresh" onAction="#onRefresh" styleClass="button"/>
+    </HBox>
 
-            <Label text="Active carriers" style="-fx-font-weight: bold;"/>
-            <TableView fx:id="carriersTable" prefHeight="220">
-                <columns>
-                    <TableColumn fx:id="usernameCol" text="Username" prefWidth="220"/>
-                    <TableColumn fx:id="activeCol" text="Active" prefWidth="80"/>
-                    <TableColumn fx:id="avgRatingCol" text="Avg Rating" prefWidth="120"/>
-                </columns>
-            </TableView>
-
-            <Label text="Deleted carriers" style="-fx-font-weight: bold;"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button text="Undo Deletion" onAction="#onUndoDeletion"/>
-            </HBox>
-            <TableView fx:id="deletedTable" prefHeight="180">
-                <columns>
-                    <TableColumn fx:id="deletedUsernameCol" text="Username" prefWidth="220"/>
-                    <TableColumn fx:id="deletedAvgRatingCol" text="Avg Rating" prefWidth="120"/>
-                </columns>
-            </TableView>
-
-            <Label fx:id="statusLabel" text="" style="-fx-text-fill: rgba(0,0,0,0.65);"/>
-        </VBox>
-    </center>
-
-</BorderPane>
+    <SplitPane VBox.vgrow="ALWAYS" orientation="VERTICAL" dividerPositions="0.6">
+        <items>
+            <VBox spacing="8">
+                 <Label text="Active Carriers" styleClass="title-medium"/>
+                 <TableView fx:id="carriersTable" VBox.vgrow="ALWAYS">
+                     <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                     <columns>
+                         <TableColumn fx:id="usernameCol" text="Username"/>
+                         <TableColumn fx:id="activeCol" text="Active"/>
+                         <TableColumn fx:id="avgRatingCol" text="Rating"/>
+                     </columns>
+                 </TableView>
+            </VBox>
+            
+            <VBox spacing="8">
+                 <HBox spacing="16" alignment="CENTER_LEFT">
+                     <Label text="Deleted History" styleClass="title-medium"/>
+                     <Button text="Undo Delete" onAction="#onUndoDeletion" styleClass="button"/>
+                 </HBox>
+                 <TableView fx:id="deletedTable" VBox.vgrow="ALWAYS">
+                     <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                     <columns>
+                         <TableColumn fx:id="deletedUsernameCol" text="Username"/>
+                         <TableColumn fx:id="deletedAvgRatingCol" text="Rating"/>
+                     </columns>
+                 </TableView>
+            </VBox>
+        </items>
+    </SplitPane>
+    <Label fx:id="statusLabel" styleClass="status"/>
+</VBox>

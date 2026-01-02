@@ -19,6 +19,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Owner Products Management Screen.
+ * <p>
+ * Allows the owner to list, create, update, and toggle availability of
+ * products.
+ * Handles validation of price, stock, and thresholds.
+ * </p>
+ */
 public final class OwnerProductsController {
     private static final Logger LOG = Logger.getLogger(OwnerProductsController.class.getName());
 
@@ -57,6 +65,10 @@ public final class OwnerProductsController {
     private final ProductDao productDao = new ProductDao();
     private ProductRecord selected;
 
+    /**
+     * Initializes the controller.
+     * Sets up table columns (including calculated price display) and form binding.
+     */
     @FXML
     private void initialize() {
         colId.setCellValueFactory(v -> new SimpleStringProperty(String.valueOf(v.getValue().id())));
@@ -104,6 +116,13 @@ public final class OwnerProductsController {
         clearForm();
     }
 
+    /**
+     * Saves the product (Create or Update).
+     * <p>
+     * Validates all fields (name uniqueness, positive numbers, limits).
+     * Handles specific constraints like duplicate names.
+     * </p>
+     */
     @FXML
     private void onSave() {
         try {
@@ -210,6 +229,10 @@ public final class OwnerProductsController {
         }
     }
 
+    /**
+     * Toggles the "Active" status of the selected product.
+     * Inactive products are hidden from the Customer view.
+     */
     @FXML
     private void onToggleActive() {
         ProductRecord row = table.getSelectionModel().getSelectedItem();
@@ -251,6 +274,10 @@ public final class OwnerProductsController {
         }
     }
 
+    /**
+     * Reloads the product list from the database.
+     * Attempts to preserve the current selection.
+     */
     public void reload() {
         try {
             List<ProductRecord> all = productDao.fetchAllSorted();

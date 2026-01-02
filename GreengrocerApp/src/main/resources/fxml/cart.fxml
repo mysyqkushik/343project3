@@ -4,58 +4,108 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.CartController">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.groupxx.greengrocer.controller.CartController"
+      stylesheets="@../css/app.css"
+      style="-fx-background-color: -fx-background;"
+      spacing="0">
 
-    <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Cart" styleClass="title"/>
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Button text="Remove Selected" onAction="#onRemoveSelected"/>
-            <Button text="Clear" onAction="#onClear"/>
-            <Button text="Close" onAction="#onClose"/>
-        </HBox>
-    </top>
+    <!-- Header -->
+    <HBox spacing="16" alignment="CENTER_LEFT" styleClass="top-bar">
+        <Label text="Shopping Cart" styleClass="headline-medium"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Clear Cart" onAction="#onClear" styleClass="button-danger"/>
+        <Button text="Close" onAction="#onClose" styleClass="button"/>
+    </HBox>
 
-    <center>
-        <TableView fx:id="table">
-            <columns>
-                <TableColumn fx:id="colName" text="Product" prefWidth="240"/>
-                <TableColumn fx:id="colKg" text="Kg" prefWidth="90"/>
-                <TableColumn fx:id="colUnit" text="Unit Price/kg" prefWidth="120"/>
-                <TableColumn fx:id="colTotal" text="Line Total" prefWidth="120"/>
-            </columns>
-        </TableView>
-    </center>
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.65" orientation="HORIZONTAL">
+        <items>
+            <!-- Cart Items Table -->
+            <VBox spacing="8">
+                <padding>
+                    <Insets top="16" right="16" bottom="16" left="16"/>
+                </padding>
+                
+                <TableView fx:id="table" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colName" text="Product"/>
+                        <TableColumn fx:id="colKg" text="Quantity (kg)"/>
+                        <TableColumn fx:id="colUnit" text="Price/kg"/>
+                        <TableColumn fx:id="colTotal" text="Total"/>
+                    </columns>
+                </TableView>
+                
+                <HBox alignment="CENTER_LEFT">
+                    <Button text="Remove Selected Item" onAction="#onRemoveSelected" styleClass="button"/>
+                </HBox>
+            </VBox>
 
-    <bottom>
-        <VBox spacing="8">
-            <Label fx:id="rulesLabel" wrapText="true" styleClass="subtitle"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Coupon:"/>
-                <TextField fx:id="couponField" promptText="e.g. SAVE10" prefWidth="160"/>
-                <Label text="Delivery date:"/>
-                <DatePicker fx:id="deliveryDate"/>
-                <Label text="Time:"/>
-                <Spinner fx:id="hourSpinner" prefWidth="70"/>
-                <Label text=":"/>
-                <Spinner fx:id="minSpinner" prefWidth="70"/>
-            </HBox>
+            <!-- Checkout Panel -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <content>
+                    <VBox spacing="16" styleClass="card">
+                        <padding>
+                            <Insets top="24" right="24" bottom="24" left="24"/>
+                        </padding>
+                        
+                        <Label text="Order Summary" styleClass="title-large"/>
+                        <Separator/>
+                        
+                        <GridPane hgap="12" vgap="12">
+                             <columnConstraints>
+                                 <ColumnConstraints hgrow="ALWAYS"/>
+                                 <ColumnConstraints halignment="RIGHT"/>
+                             </columnConstraints>
+                             
+                             <Label text="Subtotal" styleClass="body-large" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                             <Label fx:id="subtotalLabel" styleClass="body-large" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                             
+                             <Label text="Discount" styleClass="body-large" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                             <Label fx:id="discountLabel" styleClass="body-large" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                             
+                             <Label text="VAT (included)" styleClass="body-medium" style="-fx-text-fill: -fx-text-secondary;" 
+                                    GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                             <Label fx:id="vatLabel" styleClass="body-medium" style="-fx-text-fill: -fx-text-secondary;" 
+                                    GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                             
+                             <Label text="Total" styleClass="headline-medium" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                             <Label fx:id="totalLabel" styleClass="headline-medium" style="-fx-text-fill: -fx-primary;" 
+                                    GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        </GridPane>
+                        
+                        <Separator/>
+                        
+                        <VBox spacing="8">
+                            <Label text="Delivery Details" styleClass="title-medium"/>
+                            
+                            <Label text="Date" styleClass="caption"/>
+                            <DatePicker fx:id="deliveryDate" maxWidth="Infinity"/>
+                            
+                            <Label text="Time (HH:MM)" styleClass="caption"/>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Spinner fx:id="hourSpinner" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                <Label text=":"/>
+                                <Spinner fx:id="minSpinner" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            </HBox>
+                        </VBox>
+                        
+                        <VBox spacing="8">
+                            <Label text="Coupon Code" styleClass="title-medium"/>
+                            <HBox spacing="8">
+                                <TextField fx:id="couponField" promptText="Enter code..." HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                        </VBox>
+                        
+                         <Label fx:id="rulesLabel" wrapText="true" styleClass="caption"/>
+                         <Label fx:id="statusLabel" styleClass="status" wrapText="true"/>
 
-            <HBox spacing="20" alignment="CENTER_RIGHT">
-                <Label fx:id="subtotalLabel"/>
-                <Label fx:id="discountLabel"/>
-                <Label fx:id="vatLabel"/>
-                <Label fx:id="totalLabel" style="-fx-font-weight: bold;"/>
-                <Button fx:id="checkoutButton" text="Checkout" onAction="#onCheckout"/>
-            </HBox>
-
-            <Label fx:id="statusLabel" styleClass="status"/>
-        </VBox>
-    </bottom>
-
-    <padding>
-        <Insets top="12" right="12" bottom="12" left="12"/>
-    </padding>
-</BorderPane>
+                        <Button fx:id="checkoutButton" text="Checkout" onAction="#onCheckout" 
+                                styleClass="button-primary" maxWidth="Infinity" prefHeight="48"/>
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </items>
+    </SplitPane>
+</VBox>

@@ -18,17 +18,29 @@ import java.util.logging.Logger;
 public final class LoginController {
     private static final Logger LOG = Logger.getLogger(LoginController.class.getName());
 
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Button loginButton;
-    @FXML private Button registerButton;
-    @FXML private Label statusLabel;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Button loginButton;
+    @FXML
+    private Button registerButton;
+    @FXML
+    private Label statusLabel;
 
+    /** Counter for failed login attempts to trigger temporary lockout. */
     private int failedAttempts = 0;
+
+    /** Timestamp until which login is disabled if lockout is active. */
     private Instant lockedUntil = Instant.EPOCH;
 
     private final UserDao userDao = new UserDao();
 
+    /**
+     * Initializes the controller.
+     * Sets up text limiters for input fields and clears the status label.
+     */
     @FXML
     private void initialize() {
         TextLimiters.limitLength(usernameField, 32);
@@ -36,6 +48,14 @@ public final class LoginController {
         statusLabel.setText("");
     }
 
+    /**
+     * Handles the login action triggered by the "Sign In" button or Enter key in
+     * password field.
+     * <p>
+     * Validates input, checks for lockout, authenticates against the database,
+     * and redirects to the appropriate home screen based on user role.
+     * </p>
+     */
     @FXML
     private void onLogin() {
         if (Instant.now().isBefore(lockedUntil)) {
@@ -92,11 +112,19 @@ public final class LoginController {
         }, "login-thread").start();
     }
 
+    /**
+     * Opens the registration screen when "Create Account" is clicked.
+     */
     @FXML
     private void onOpenRegister() {
         SceneRouter.showRegister();
     }
 
+    /**
+     * Disables or enables UI controls during async operations.
+     *
+     * @param busy true to disable controls (show busy state), false to enable.
+     */
     private void setBusy(boolean busy) {
         loginButton.setDisable(busy);
         registerButton.setDisable(busy);

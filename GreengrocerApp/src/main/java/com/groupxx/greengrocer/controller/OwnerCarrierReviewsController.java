@@ -14,8 +14,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Controller for the Owner's Carrier Reviews tab.
- * Displays all carrier ratings and comments from customers.
+ * Controller for the Owner's Carrier Reviews Tab.
+ * <p>
+ * Displays a list of all carrier reviews submitted by customers, including
+ * ratings,
+ * comments, and associated order details.
+ * </p>
  */
 public final class OwnerCarrierReviewsController {
     private static final Logger LOG = Logger.getLogger(OwnerCarrierReviewsController.class.getName());
@@ -37,6 +41,10 @@ public final class OwnerCarrierReviewsController {
 
     private final OrderDao orderDao = new OrderDao();
 
+    /**
+     * Initializes the controller.
+     * Sets up table columns and specific cell factories for comments.
+     */
     @FXML
     private void initialize() {
         colOrderId.setCellValueFactory(cd -> new SimpleStringProperty(String.valueOf(cd.getValue().orderId())));
@@ -80,6 +88,9 @@ public final class OwnerCarrierReviewsController {
         load();
     }
 
+    /**
+     * Loads the carrier reviews from the database asynchronously.
+     */
     public void load() {
         new Thread(() -> {
             try {

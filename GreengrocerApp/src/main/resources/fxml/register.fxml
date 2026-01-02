@@ -4,51 +4,59 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
+<ScrollPane fitToWidth="true" fitToHeight="true"
+            xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.RegisterController">
+            fx:controller="com.groupxx.greengrocer.controller.RegisterController"
+            stylesheets="@../css/app.css">
 
-    <top>
-        <VBox spacing="6" alignment="CENTER">
-            <Label text="Register as Customer" styleClass="title"/>
-            <Label text="Rules: ≥8 chars, upper + lower case, digit, special char." styleClass="subtitle"/>
-        </VBox>
-    </top>
+    <content>
+        <StackPane style="-fx-background-color: -fx-background;">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
 
-    <center>
-        <VBox spacing="10" alignment="CENTER">
-            <GridPane hgap="10" vgap="10" maxWidth="520">
-                <columnConstraints>
-                    <ColumnConstraints percentWidth="35"/>
-                    <ColumnConstraints percentWidth="65"/>
-                </columnConstraints>
+            <VBox spacing="24" alignment="CENTER" styleClass="card" maxWidth="500">
+                <padding>
+                    <Insets top="32" right="32" bottom="32" left="32"/>
+                </padding>
+                
+                <VBox spacing="8" alignment="CENTER">
+                    <Label text="Create Account" styleClass="headline-large"/>
+                    <Label text="Password requirement: Minimum 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char." 
+                           wrapText="true" textAlignment="CENTER" styleClass="body-medium" style="-fx-text-fill: -fx-text-secondary;"/>
+                </VBox>
 
-                <Label text="Username:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="usernameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <GridPane hgap="16" vgap="16" maxWidth="Infinity">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="100" prefWidth="120" hgrow="SOMETIMES" halignment="RIGHT"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
 
-                <Label text="Password:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <Label text="Username" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label-large"/>
+                    <TextField fx:id="usernameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                <Label text="Confirm Password:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <PasswordField fx:id="confirmPasswordField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label text="Password" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label-large"/>
+                    <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                <Label text="Address:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="addressField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <Label text="Confirm Pwd" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label-large"/>
+                    <PasswordField fx:id="confirmPasswordField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                <Label text="Phone (optional):" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="phoneField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-            </GridPane>
+                    <Label text="Address" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="label-large"/>
+                    <TextField fx:id="addressField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-            <HBox spacing="10" alignment="CENTER">
-                <Button fx:id="createButton" text="Create Account" onAction="#onCreateAccount"/>
-                <Button fx:id="backButton" text="Back" onAction="#onBack"/>
-            </HBox>
+                    <Label text="Phone (Opt)" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="label-large"/>
+                    <TextField fx:id="phoneField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                </GridPane>
 
-            <Label fx:id="statusLabel" styleClass="status"/>
-        </VBox>
-    </center>
+                <HBox spacing="16" alignment="CENTER_RIGHT" maxWidth="Infinity">
+                    <Button fx:id="backButton" text="Back" onAction="#onBack" styleClass="button"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="createButton" text="Register" onAction="#onCreateAccount" styleClass="button-primary"/>
+                </HBox>
 
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
-</BorderPane>
+                <Label fx:id="statusLabel" styleClass="status" wrapText="true" textAlignment="CENTER"/>
+            </VBox>
+        </StackPane>
+    </content>
+</ScrollPane>

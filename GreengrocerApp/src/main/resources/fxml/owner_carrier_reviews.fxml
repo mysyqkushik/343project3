@@ -4,33 +4,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.OwnerCarrierReviewsController">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.groupxx.greengrocer.controller.OwnerCarrierReviewsController"
+      stylesheets="@../css/app.css"
+      spacing="16">
 
-    <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <children>
-                <Label text="Carrier Reviews" style="-fx-font-weight: bold;"/>
-                <Pane HBox.hgrow="ALWAYS"/>
-                <Button text="Refresh" onAction="#onRefresh"/>
-            </children>
-        </HBox>
-    </top>
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
-    <center>
-        <TableView fx:id="reviewsTable">
-            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
-            <columns>
-                <TableColumn fx:id="colOrderId" text="Order ID" prefWidth="70"/>
-                <TableColumn fx:id="colCarrier" text="Carrier" prefWidth="100"/>
-                <TableColumn fx:id="colCustomer" text="Customer" prefWidth="100"/>
-                <TableColumn fx:id="colRating" text="Rating" prefWidth="70"/>
-                <TableColumn fx:id="colComment" text="Comment" prefWidth="300"/>
-                <TableColumn fx:id="colDate" text="Date" prefWidth="150"/>
-            </columns>
-        </TableView>
-    </center>
+    <HBox spacing="16" alignment="CENTER_LEFT">
+        <Label text="Carrier Reviews" styleClass="headline-medium"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" onAction="#onRefresh" styleClass="button"/>
+    </HBox>
 
-</BorderPane>
+    <TableView fx:id="reviewsTable" VBox.vgrow="ALWAYS">
+        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+        <columns>
+            <TableColumn fx:id="colOrderId" text="Order ID" prefWidth="70"/>
+            <TableColumn fx:id="colCarrier" text="Carrier"/>
+            <TableColumn fx:id="colCustomer" text="Customer"/>
+            <TableColumn fx:id="colRating" text="Rating"/>
+            <TableColumn fx:id="colComment" text="Comment" prefWidth="300"/>
+            <TableColumn fx:id="colDate" text="Date"/>
+        </columns>
+    </TableView>
+</VBox>

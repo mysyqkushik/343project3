@@ -22,6 +22,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Order History Screen.
+ * <p>
+ * Displays a list of past orders for the logged-in customer. Provides
+ * functionality
+ * to cancel pending orders, download invoices, and rate carriers for delivered
+ * orders.
+ * </p>
+ */
 public class OrderHistoryController {
     private static final Logger LOG = Logger.getLogger(OrderHistoryController.class.getName());
 
@@ -47,6 +56,10 @@ public class OrderHistoryController {
 
     private final OrderDao orderDao = new OrderDao();
 
+    /**
+     * Initializes the controller.
+     * Sets up the orders table columns and action buttons (Cancel, Invoice, Rate).
+     */
     @FXML
     private void initialize() {
         ruleLabel.setText("Cancel rule: You can cancel within " + AppConfig.CANCEL_WINDOW_MINUTES
@@ -117,6 +130,16 @@ public class OrderHistoryController {
         }
     }
 
+    /**
+     * Attempts to cancel a specific order.
+     * <p>
+     * Checks if the order is eligible for cancellation (within time window, not
+     * accepted by carrier).
+     * If valid, cancels the order and restores stock.
+     * </p>
+     *
+     * @param row The order summary record to cancel.
+     */
     private void onCancelRow(OrderSummaryRecord row) {
         if (!isCancelable(row)) {
             Alerts.warn("Not Allowed", "This order cannot be canceled by rule.");
@@ -154,6 +177,11 @@ public class OrderHistoryController {
         return !d.isNegative() && d.toMinutes() <= AppConfig.CANCEL_WINDOW_MINUTES;
     }
 
+    /**
+     * Saves the invoice PDF for a specific order to the user's local file system.
+     *
+     * @param row The order to get the invoice for.
+     */
     private void onSaveInvoice(OrderSummaryRecord row) {
         try {
             String customerUsername = SessionContext.requireUsername();
@@ -178,6 +206,14 @@ public class OrderHistoryController {
         }
     }
 
+    /**
+     * Opens a dialog to rate the carrier for a delivered order.
+     * <p>
+     * Allows giving a 1-5 star rating and an optional comment.
+     * </p>
+     *
+     * @param row The order to rate.
+     */
     private void onRateCarrier(OrderSummaryRecord row) {
         try {
             String customerUsername = SessionContext.requireUsername();

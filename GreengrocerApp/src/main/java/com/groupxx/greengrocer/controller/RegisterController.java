@@ -12,6 +12,13 @@ import javafx.scene.control.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Registration Screen.
+ * <p>
+ * Handles new user account creation, including input validation and database
+ * insertion.
+ * </p>
+ */
 public final class RegisterController {
     private static final Logger LOG = Logger.getLogger(RegisterController.class.getName());
 
@@ -35,6 +42,10 @@ public final class RegisterController {
 
     private final UserDao userDao = new UserDao();
 
+    /**
+     * Initializes the controller.
+     * Sets up text limiters for input fields.
+     */
     @FXML
     private void initialize() {
         TextLimiters.limitLength(usernameField, 32);
@@ -50,6 +61,13 @@ public final class RegisterController {
         SceneRouter.showLogin();
     }
 
+    /**
+     * Attempts to create a new customer account.
+     * <p>
+     * Validates all input fields (username, password strength, address, phone).
+     * If valid, creates the user in the database and redirects to the login screen.
+     * </p>
+     */
     @FXML
     private void onCreateAccount() {
         String username = Validators.normalize(usernameField.getText());

@@ -5,86 +5,82 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.OwnerReportsController">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.groupxx.greengrocer.controller.OwnerReportsController"
+      stylesheets="@../css/app.css"
+      style="-fx-background-color: -fx-background;"
+      spacing="24">
 
-    <top>
-        <VBox spacing="8">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <children>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <children>
-                        <Label text="Reports" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                        <Region minWidth="20"/>
-                        <Label text="Days:"/>
-                        <ComboBox fx:id="daysCombo" prefWidth="80"/>
-                        <Pane HBox.hgrow="ALWAYS"/>
-                        <Button text="Reload" onAction="#onReload"/>
-                    </children>
-                </HBox>
-            </children>
+    <!-- Generous page padding -->
+    <padding><Insets top="24" right="32" bottom="24" left="32"/></padding>
+    
+    <!-- Header Section -->
+    <VBox spacing="8">
+        <HBox spacing="24" alignment="CENTER_LEFT">
+            <Label text="Reports &amp; Analytics" styleClass="headline-medium"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="card" style="-fx-padding: 8px 16px; -fx-background-radius: 20px;">
+                <Label text="Timeframe:" styleClass="label-large"/>
+                <ComboBox fx:id="daysCombo" prefWidth="120" style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+                <Button text="Update" onAction="#onReload" styleClass="button-primary" style="-fx-padding: 6px 16px; -fx-font-size: 13px;"/>
+            </HBox>
+        </HBox>
+        <Label text="Overview of store performance, sales metrics, and carrier ratings." styleClass="body-large" style="-fx-text-fill: -fx-text-secondary;"/>
+    </VBox>
+    
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-padding: 0;">
+        <VBox spacing="24">
+            <padding><Insets top="4" bottom="24" left="4" right="16"/></padding> <!-- Right padding for scrollbar space -->
+            
+            <!-- Key Metrics Grid (Hypothetical layout for better grouping) -->
+            <GridPane hgap="24" vgap="24">
+                 <columnConstraints>
+                     <ColumnConstraints percentWidth="50"/>
+                     <ColumnConstraints percentWidth="50"/>
+                 </columnConstraints>
+                 
+                 <!-- Chart 1: Sales -->
+                 <VBox styleClass="card" GridPane.rowIndex="0" GridPane.columnIndex="0" VBox.vgrow="ALWAYS">
+                     <Label text="Daily Revenue" styleClass="title-large"/>
+                     <Label text="Total sales value (currency) over the selected period." styleClass="caption"/>
+                     <Separator style="-fx-padding: 8 0 8 0;"/>
+                     <LineChart fx:id="salesChart" animated="false" prefHeight="320" createSymbols="true">
+                         <xAxis><CategoryAxis label="Date" side="BOTTOM"/></xAxis>
+                         <yAxis><NumberAxis label="Revenue" side="LEFT"/></yAxis>
+                     </LineChart>
+                 </VBox>
+                 
+                 <!-- Chart 2: Customers -->
+                 <VBox styleClass="card" GridPane.rowIndex="0" GridPane.columnIndex="1" VBox.vgrow="ALWAYS">
+                     <Label text="Customer Growth" styleClass="title-large"/>
+                     <Label text="Active customers placing orders." styleClass="caption"/>
+                     <Separator style="-fx-padding: 8 0 8 0;"/>
+                     <LineChart fx:id="customersChart" animated="false" prefHeight="320" createSymbols="true">
+                         <xAxis><CategoryAxis label="Date" side="BOTTOM"/></xAxis>
+                         <yAxis><NumberAxis label="Active Users" side="LEFT"/></yAxis>
+                     </LineChart>
+                 </VBox>
+            </GridPane>
+             
+             <!-- Chart 3: Carriers (Full Width) -->
+             <VBox styleClass="card">
+                 <HBox spacing="16" alignment="CENTER_LEFT">
+                     <VBox>
+                         <Label text="Carrier Performance" styleClass="title-large"/>
+                         <Label text="Average customer ratings (0-5 stars)." styleClass="caption"/>
+                     </VBox>
+                     <Region HBox.hgrow="ALWAYS"/>
+                     <TextField fx:id="carrierSearchField" promptText="Filter by carrier name..." prefWidth="240"/>
+                 </HBox>
+                 <Separator style="-fx-padding: 8 0 8 0;"/>
+                 <BarChart fx:id="ratingsChart" animated="false" prefHeight="300" legendVisible="false">
+                     <xAxis><CategoryAxis label="Carrier" side="BOTTOM"/></xAxis>
+                     <yAxis><NumberAxis label="Rating" side="LEFT" upperBound="5.0" autoRanging="false"/></yAxis>
+                 </BarChart>
+             </VBox>
+             
         </VBox>
-    </top>
-
-    <center>
-        <ScrollPane fitToWidth="true">
-            <content>
-                <VBox spacing="12">
-                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                    <children>
-                        <TitledPane text="Customer Growth &amp; Activity" collapsible="false">
-                            <content>
-                                <LineChart fx:id="customersChart" prefHeight="250" prefWidth="700" animated="false">
-                                    <xAxis>
-                                        <CategoryAxis label="Day"/>
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis label="Count" autoRanging="true"/>
-                                    </yAxis>
-                                </LineChart>
-                            </content>
-                        </TitledPane>
-
-                        <TitledPane text="Daily sales (orders + revenue)" collapsible="false">
-                            <content>
-                                <LineChart fx:id="salesChart" prefHeight="250" prefWidth="700">
-                                    <xAxis>
-                                        <CategoryAxis label="Day"/>
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis label="Value"/>
-                                    </yAxis>
-                                </LineChart>
-                            </content>
-                        </TitledPane>
-
-                        <TitledPane text="Carrier ratings" collapsible="false">
-                            <content>
-                                <VBox spacing="8">
-                                    <children>
-                                        <HBox spacing="10" alignment="CENTER_LEFT">
-                                            <children>
-                                                <Label text="Filter:"/>
-                                                <TextField fx:id="carrierSearchField" promptText="Search carrier..." prefWidth="150"/>
-                                            </children>
-                                        </HBox>
-                                        <BarChart fx:id="ratingsChart" prefHeight="250" prefWidth="700" categoryGap="20" barGap="5">
-                                            <xAxis>
-                                                <CategoryAxis label="Carrier"/>
-                                            </xAxis>
-                                            <yAxis>
-                                                <NumberAxis label="Average rating" autoRanging="true"/>
-                                            </yAxis>
-                                        </BarChart>
-                                    </children>
-                                </VBox>
-                            </content>
-                        </TitledPane>
-                    </children>
-                </VBox>
-            </content>
-        </ScrollPane>
-    </center>
-
-</BorderPane>
+    </ScrollPane>
+</VBox>

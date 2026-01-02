@@ -4,48 +4,46 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.CustomerMessagesController">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.groupxx.greengrocer.controller.CustomerMessagesController"
+      stylesheets="@../css/app.css"
+      style="-fx-background-color: -fx-background;">
 
-    <top>
-        <HBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
+    <HBox spacing="16" alignment="CENTER_LEFT" styleClass="top-bar">
+        <Label text="Messages" styleClass="headline-medium"/>
+        <Label text="(Direct line to Owner)" styleClass="body-medium" style="-fx-text-fill: -fx-text-secondary;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefresh" styleClass="button"/>
+    </HBox>
 
-            <Label text="Messages (Customer ↔ Owner)"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefresh"/>
-        </HBox>
-    </top>
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.7" orientation="VERTICAL">
+        <items>
+            <!-- Message List -->
+            <TableView fx:id="messageTable">
+                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                <columns>
+                    <TableColumn fx:id="timeCol" text="Time" prefWidth="120"/>
+                    <TableColumn fx:id="fromCol" text="From" prefWidth="100"/>
+                    <TableColumn fx:id="textCol" text="Message"/>
+                </columns>
+            </TableView>
 
-    <center>
-        <TableView fx:id="messageTable" prefHeight="400">
-            <columns>
-                <TableColumn fx:id="timeCol" text="Time" prefWidth="160" />
-                <TableColumn fx:id="fromCol" text="From" prefWidth="120" />
-                <TableColumn fx:id="textCol" text="Message" prefWidth="420" />
-            </columns>
-        </TableView>
-    </center>
-
-    <bottom>
-        <VBox spacing="8">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-
-            <Label text="Write a message to the owner:" />
-            <TextArea fx:id="messageInput" prefRowCount="3" wrapText="true" />
-            <HBox spacing="10">
-                <Pane HBox.hgrow="ALWAYS"/>
-                <Label fx:id="sendTimerLabel" text="" />
-                <Button fx:id="cancelSendBtn" text="Cancel sending" onAction="#onCancelSend"
-                        style="-fx-background-color: #b00020; -fx-text-fill: white;" />
-                <Button fx:id="sendBtn" text="Send" onAction="#onSend" />
-            </HBox>
-        </VBox>
-    </bottom>
-
-</BorderPane>
+            <!-- Input Area -->
+            <VBox spacing="12">
+                <padding>
+                    <Insets top="16" right="24" bottom="16" left="24"/>
+                </padding>
+                
+                <Label text="Write a message" styleClass="title-medium"/>
+                <TextArea fx:id="messageInput" wrapText="true" VBox.vgrow="ALWAYS" promptText="Type your message here..."/>
+                
+                <HBox spacing="16" alignment="CENTER_RIGHT">
+                    <Label fx:id="sendTimerLabel" styleClass="caption"/>
+                    <Button fx:id="cancelSendBtn" text="Cancel" onAction="#onCancelSend" styleClass="button-danger"/>
+                    <Button fx:id="sendBtn" text="Send Message" onAction="#onSend" styleClass="button-primary"/>
+                </HBox>
+            </VBox>
+        </items>
+    </SplitPane>
+</VBox>

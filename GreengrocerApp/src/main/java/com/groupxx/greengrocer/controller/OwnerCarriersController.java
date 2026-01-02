@@ -14,6 +14,14 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
+/**
+ * Controller for the Owner Carriers Management Screen.
+ * <p>
+ * Manages carrier accounts: creating new carriers, toggling their active
+ * status,
+ * and handling soft-deletions. Displays average ratings for carriers.
+ * </p>
+ */
 public final class OwnerCarriersController {
 
     @FXML
@@ -38,6 +46,10 @@ public final class OwnerCarriersController {
     private final UserDao userDao = new UserDao();
     private final com.groupxx.greengrocer.dao.OrderDao orderDao = new com.groupxx.greengrocer.dao.OrderDao();
 
+    /**
+     * Initializes the controller.
+     * Configures columns for active and deleted carrier tables.
+     */
     @FXML
     private void initialize() {
         usernameCol.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().username()));
@@ -72,6 +84,10 @@ public final class OwnerCarriersController {
         }
     }
 
+    /**
+     * Opens a dialog to create a new carrier account.
+     * Enforces strong password rules.
+     */
     @FXML
     private void onAddCarrier() {
         TextInputDialog userDlg = new TextInputDialog();
@@ -131,6 +147,10 @@ public final class OwnerCarriersController {
         }
     }
 
+    /**
+     * Toggles the active status of a carrier.
+     * Prevents deactivation if the carrier has active orders.
+     */
     @FXML
     private void onToggleActive() {
         CarrierSummaryRecord rec = carriersTable.getSelectionModel().getSelectedItem();
@@ -164,6 +184,10 @@ public final class OwnerCarriersController {
         }
     }
 
+    /**
+     * Soft-deletes a carrier account.
+     * Prevents deletion if the carrier has active orders.
+     */
     @FXML
     private void onDeleteCarrier() {
         CarrierSummaryRecord rec = carriersTable.getSelectionModel().getSelectedItem();

@@ -4,56 +4,45 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.groupxx.greengrocer.controller.OwnerMessagesController">
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.groupxx.greengrocer.controller.OwnerMessagesController"
+      stylesheets="@../css/app.css"
+      spacing="16">
 
-    <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <children>
-                <Label text="Filter by:"/>
-                <ComboBox fx:id="filterTypeCombo" prefWidth="100">
-                    <tooltip><Tooltip text="Name: Filter by username&#10;ID: Filter by user ID&#10;Orders: Filter by order count (≥ entered number)"/></tooltip>
-                </ComboBox>
-                <TextField fx:id="searchField" promptText="Search..." prefWidth="120"/>
-                <Region minWidth="20"/>
-                <Label text="Customer:"/>
-                <ComboBox fx:id="customerCombo" prefWidth="280"/>
-                <Pane HBox.hgrow="ALWAYS"/>
-            </children>
-        </HBox>
-    </top>
-
-    <center>
-        <TableView fx:id="messageTable">
-            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
-            <columns>
-                <TableColumn fx:id="custIdCol" text="Cust ID" prefWidth="60"/>
-                <TableColumn fx:id="custNameCol" text="Customer" prefWidth="100"/>
-                <TableColumn fx:id="timeCol" text="Time" prefWidth="140"/>
-                <TableColumn fx:id="fromCol" text="From" prefWidth="80"/>
-                <TableColumn fx:id="textCol" text="Message"/>
-            </columns>
-        </TableView>
-    </center>
-
-    <bottom>
-        <VBox spacing="8">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <children>
-                <Label text="Reply as Owner:"/>
-                <TextArea fx:id="messageInput" prefRowCount="3" wrapText="true"/>
-                <HBox alignment="CENTER_RIGHT">
-                    <children>
-                        <Label fx:id="sendTimerLabel" text=""/>
-            <Button fx:id="cancelSendBtn" text="Cancel sending" onAction="#onCancelSend"
-                    style="-fx-background-color: #b00020; -fx-text-fill: white;"/>
-            <Button fx:id="sendBtn" text="Send" onAction="#onSend"/>
-                    </children>
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+    
+    <FlowPane hgap="12" vgap="12" alignment="CENTER_LEFT">
+        <ComboBox fx:id="filterTypeCombo" prefWidth="220"/>
+        <TextField fx:id="searchField" promptText="Filter value..." prefWidth="200"/>
+        <Region minWidth="20"/>
+        <Label text="Select Customer:" styleClass="label-large"/>
+        <ComboBox fx:id="customerCombo" prefWidth="400"/>
+    </FlowPane>
+    
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.7" orientation="VERTICAL">
+        <items>
+            <TableView fx:id="messageTable">
+                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                <columns>
+                    <TableColumn fx:id="custIdCol" text="ID" prefWidth="50" maxWidth="80"/>
+                    <TableColumn fx:id="custNameCol" text="Customer" prefWidth="120"/>
+                    <TableColumn fx:id="timeCol" text="Time" prefWidth="120"/>
+                    <TableColumn fx:id="fromCol" text="Sent By" prefWidth="80"/>
+                    <TableColumn fx:id="textCol" text="Message Content"/>
+                </columns>
+            </TableView>
+            
+            <VBox spacing="12">
+                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                <Label text="Reply" styleClass="title-medium"/>
+                <TextArea fx:id="messageInput" wrapText="true" VBox.vgrow="ALWAYS"/>
+                <HBox spacing="16" alignment="CENTER_RIGHT">
+                     <Label fx:id="sendTimerLabel" styleClass="caption"/>
+                     <Button fx:id="cancelSendBtn" text="Cancel" onAction="#onCancelSend" styleClass="button"/>
+                     <Button fx:id="sendBtn" text="Send Reply" onAction="#onSend" styleClass="button-primary"/>
                 </HBox>
-            </children>
-        </VBox>
-    </bottom>
-
-</BorderPane>
+            </VBox>
+        </items>
+    </SplitPane>
+</VBox>

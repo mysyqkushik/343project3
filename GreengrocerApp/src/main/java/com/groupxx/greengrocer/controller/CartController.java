@@ -28,6 +28,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Shopping Cart Screen.
+ * <p>
+ * Manages the user's cart items, applies discounts (coupons, loyalty),
+ * validates
+ * delivery details (date/time), and handles the final checkout process.
+ * </p>
+ */
 public final class CartController {
     private static final Logger LOG = Logger.getLogger(CartController.class.getName());
 
@@ -82,6 +90,10 @@ public final class CartController {
         } : r;
     }
 
+    /**
+     * Initializes the controller.
+     * Sets up table columns, initial delivery time defaults, and loads settings.
+     */
     @FXML
     private void initialize() {
         TextLimiters.limitLength(couponField, 32);
@@ -136,6 +148,14 @@ public final class CartController {
         ((Stage) table.getScene().getWindow()).close();
     }
 
+    /**
+     * Finalizes the order and places it in the database.
+     * <p>
+     * Validates cart content (minimum subtotal), delivery time (rule: within 48h,
+     * not past),
+     * and coupon validity. If successful, clears the cart and closes the window.
+     * </p>
+     */
     @FXML
     private void onCheckout() {
         statusLabel.setText("");
@@ -262,6 +282,14 @@ public final class CartController {
                 + " (you have " + deliveredOrdersSoFar + ")";
     }
 
+    /**
+     * Recalculates cart totals including subtotal, discounts, VAT, and grand total.
+     * <p>
+     * Applies coupon logic if a valid code is entered and loyalty discount if
+     * applicable.
+     * Updates UI labels with formatted currency values.
+     * </p>
+     */
     private void recalcTotals() {
         BigDecimal subtotal = CartModel.get().subtotal();
 

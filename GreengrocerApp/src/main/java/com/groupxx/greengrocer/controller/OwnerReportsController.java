@@ -24,7 +24,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Owner reports: basic charts (daily sales + carrier ratings) + customer stats.
+ * Controller for the Owner Reports Screen.
+ * <p>
+ * Visualization of sales, orders, and customer statistics using charts.
+ * Allows filtering by date range (7, 30, 90 days) and visualizing carrier
+ * performance.
+ * </p>
  */
 public final class OwnerReportsController {
 
@@ -46,6 +51,10 @@ public final class OwnerReportsController {
 
     private List<CarrierSummaryRecord> allCarriers = new ArrayList<>();
 
+    /**
+     * Initializes the controller.
+     * Sets up the days combo box and chart animations.
+     */
     @FXML
     public void initialize() {
         daysCombo.setItems(FXCollections.observableArrayList(7, 14, 30, 60, 90));
@@ -64,7 +73,10 @@ public final class OwnerReportsController {
         reload();
     }
 
-    /** Called by OwnerHomeController "Refresh" button. */
+    /**
+     * Reloads all reports based on the selected date range.
+     * Called by the "Refresh" button in the parent Owner Dashboard.
+     */
     public void reload() {
         try {
             int days = daysCombo.getSelectionModel().getSelectedItem() == null ? 30

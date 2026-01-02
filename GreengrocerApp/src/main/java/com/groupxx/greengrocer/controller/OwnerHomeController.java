@@ -14,6 +14,15 @@ import javafx.scene.control.TableView;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Owner Dashboard (Home) Screen.
+ * <p>
+ * Displays a global list of orders and acts as the parent container for other
+ * owner sub-modules
+ * (Products, Carriers, Messages, Discounts, Reports), which are included via
+ * fx:include.
+ * </p>
+ */
 public final class OwnerHomeController {
     private static final Logger LOG = Logger.getLogger(OwnerHomeController.class.getName());
 
@@ -44,6 +53,10 @@ public final class OwnerHomeController {
 
     private final OrderDao orderDao = new OrderDao();
 
+    /**
+     * Initializes the controller.
+     * Sets up the orders table columns and triggers the initial load of data.
+     */
     @FXML
     private void initialize() {
         oId.setCellValueFactory(cd -> new SimpleStringProperty(String.valueOf(cd.getValue().orderId())));
@@ -79,6 +92,10 @@ public final class OwnerHomeController {
         }
     }
 
+    /**
+     * Reloads data in all child sub-controllers (Products, Carriers, etc.).
+     * Ensures that "Refresh" on the dashboard updates everything.
+     */
     private void reloadChildren() {
         try {
             if (productsIncludeController != null)

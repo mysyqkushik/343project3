@@ -22,6 +22,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Carrier Dashboard (Home) Screen.
+ * <p>
+ * The main interface for Carriers to browse available orders, claim them, view
+ * current
+ * deliveries, mark them as delivered, and view their completion history.
+ * </p>
+ */
 public class CarrierHomeController {
     private static final Logger LOG = Logger.getLogger(CarrierHomeController.class.getName());
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
@@ -47,6 +55,10 @@ public class CarrierHomeController {
 
     private final OrderDao orderDao = new OrderDao();
 
+    /**
+     * Initializes the controller.
+     * Configures table columns for available, current, and completed orders.
+     */
     @FXML
     private void initialize() {
         availableTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -84,6 +96,10 @@ public class CarrierHomeController {
         total.setCellValueFactory(cd -> new SimpleStringProperty(Formatters.formatMoney(cd.getValue().totalInclVat())));
     }
 
+    /**
+     * Loads all order lists (available, current, completed) and reviews for the
+     * logged-in carrier.
+     */
     private void loadAll() {
         try {
             String carrierUsername = SessionContext.requireUsername();
@@ -104,6 +120,14 @@ public class CarrierHomeController {
         }
     }
 
+    /**
+     * Claims the selected available order(s) for the current carrier.
+     * <p>
+     * Moves the order from "Available" to "Current" if successful.
+     * Handles race conditions where an order might have been taken by another
+     * carrier.
+     * </p>
+     */
     @FXML
     private void onClaimSelected() {
         try {
@@ -133,6 +157,14 @@ public class CarrierHomeController {
         }
     }
 
+    /**
+     * Marks the selected current order as DELIVERED.
+     * <p>
+     * Prompts the carrier to enter the actual delivery date and time.
+     * Validates the input (must be after order time, not in future) before
+     * updating.
+     * </p>
+     */
     @FXML
     private void onMarkDelivered() {
         OrderSummaryRecord sel = currentTable.getSelectionModel().getSelectedItem();

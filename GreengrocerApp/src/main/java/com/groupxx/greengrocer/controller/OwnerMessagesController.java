@@ -18,7 +18,14 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Owner ↔ Customer messaging (reply as OWNER). */
+/**
+ * Controller for the Owner Messages Screen.
+ * <p>
+ * Handles messaging between the Owner and Customers. Allows filtering
+ * customers,
+ * viewing conversation history, and sending replies with a cancellation timer.
+ * </p>
+ */
 public final class OwnerMessagesController {
 
     @FXML
@@ -64,6 +71,10 @@ public final class OwnerMessagesController {
 
     private List<CustomerSummaryRecord> fullCustomerList = new ArrayList<>();
 
+    /**
+     * Initializes the controller.
+     * Sets up filter sets, string converters for customer lists, and table columns.
+     */
     @FXML
     public void initialize() {
         // Setup filter types
@@ -113,6 +124,14 @@ public final class OwnerMessagesController {
         refreshConversation();
     }
 
+    /**
+     * Initiates the message sending process.
+     * <p>
+     * Validates that a specific customer is selected (strictly not "All Users") and
+     * that the message text is valid. Starts the "pending send" timer (grace
+     * period).
+     * </p>
+     */
     @FXML
     public void onSend() {
         CustomerSummaryRecord summary = customerCombo.getSelectionModel().getSelectedItem();

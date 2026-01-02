@@ -17,6 +17,14 @@ import javafx.stage.Stage;
 
 import java.util.Optional;
 
+/**
+ * Controller for the User Profile Screen.
+ * <p>
+ * Allows users to view and update their personal information (address, phone,
+ * email),
+ * change their profile photo, and update their password.
+ * </p>
+ */
 public final class ProfileController {
 
     @FXML
@@ -40,6 +48,10 @@ public final class ProfileController {
     private final UserDao userDao = new UserDao();
     private UserRecord current;
 
+    /**
+     * Initializes the controller.
+     * Sets up text limiters and loads current user data.
+     */
     @FXML
     private void initialize() {
         TextLimiters.limitLength(usernameField, 32);
@@ -89,6 +101,10 @@ public final class ProfileController {
         }
     }
 
+    /**
+     * Opens a file chooser to select and upload a new profile photo.
+     * Validates file size (< 2MB) and updates the database.
+     */
     @FXML
     private void onChangePhoto() {
         if (current == null)
@@ -118,6 +134,14 @@ public final class ProfileController {
         }
     }
 
+    /**
+     * Saves changes to the user's profile information.
+     * <p>
+     * Validates input fields and updates the database. Refreshes the session
+     * context
+     * if the username is changed.
+     * </p>
+     */
     @FXML
     private void onSave() {
         if (current == null)
@@ -173,6 +197,14 @@ public final class ProfileController {
         }
     }
 
+    /**
+     * Opens a dialog to change the user's password.
+     * <p>
+     * Requires the current password for verification before allowing a new password
+     * to be set.
+     * Enforces password strength rules.
+     * </p>
+     */
     @FXML
     private void onChangePassword() {
         if (current == null)

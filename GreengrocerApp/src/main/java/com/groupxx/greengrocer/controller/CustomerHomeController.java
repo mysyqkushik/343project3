@@ -27,6 +27,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Controller for the Customer Home Screen.
+ * <p>
+ * Manages product listings, search/filter functionality, and adding items to
+ * the cart.
+ * Displays products in two sorted tabs (Vegetables and Fruits) using a
+ * responsive flow layout.
+ * </p>
+ */
 public final class CustomerHomeController {
     private static final Logger LOG = Logger.getLogger(CustomerHomeController.class.getName());
 
@@ -49,6 +58,13 @@ public final class CustomerHomeController {
     private final ProductDao productDao = new ProductDao();
     private List<ProductRecord> allProducts = new ArrayList<>();
 
+    /**
+     * Initializes the controller.
+     * <p>
+     * Sets up UI bindings, validators, text limiters, and triggers the initial
+     * product load.
+     * </p>
+     */
     @FXML
     private void initialize() {
         usernameLabel.setText(SessionContext.username() == null ? "" : SessionContext.username());
@@ -103,6 +119,13 @@ public final class CustomerHomeController {
         });
     }
 
+    /**
+     * Reloads product data from the database asynchronously.
+     * <p>
+     * Updates the local cache of products and refreshes the UI render.
+     * Displays a loading status while fetching.
+     * </p>
+     */
     public void reloadProducts() {
         statusLabel.setText("Loading products...");
         new Thread(() -> {
@@ -123,6 +146,14 @@ public final class CustomerHomeController {
         }, "products-load").start();
     }
 
+    /**
+     * Renders the product list based on current filters and sort order.
+     * <p>
+     * Clears current view, filters products by search keyword, sorts them according
+     * to the selected criteria, and populates the FlowPanes for Vegetables and
+     * Fruits.
+     * </p>
+     */
     private void render() {
         String keyword = Validators.normalize(searchField.getText()).toLowerCase();
         String sort = sortCombo.getValue();
@@ -159,9 +190,9 @@ public final class CustomerHomeController {
         for (ProductRecord p : filtered) {
             HBox row = createProductRow(p);
             // Adjust row for FlowPane (optional card style)
-            row.setStyle(
-                    "-fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8; -fx-background-color: white; -fx-padding: 10;");
-            row.setPrefWidth(300);
+            // Replaced inline style with CSS class "product-card"
+            row.getStyleClass().add("product-card");
+            row.setPrefWidth(1100); // Increased from 550 to 1100 to fill screen width
 
             if (p.category() == ProductCategory.VEGETABLE)
                 vegetablesFlow.getChildren().add(row);
@@ -190,6 +221,18 @@ public final class CustomerHomeController {
         }
     }
 
+    /**
+     * Creates a UI row (card) for a specific product.
+     * <p>
+     * Generates the visual representation including image, details, pricing, stock
+     * status,
+     * and the "Add to Cart" controls. Handles dynamic logic for minimum orders and
+     * manual quantity input.
+     * </p>
+     *
+     * @param p The product record to display.
+     * @return An HBox containing the product card UI.
+     */
     private HBox createProductRow(ProductRecord p) {
         javafx.scene.image.ImageView iv = new javafx.scene.image.ImageView();
         try {
@@ -210,13 +253,14 @@ public final class CustomerHomeController {
                 .minimumOrderFor(p.name());
 
         Label name = new Label(p.name());
-        name.setStyle("-fx-font-weight: bold;");
+        name.getStyleClass().add("product-name");
 
         java.math.BigDecimal price = com.groupxx.greengrocer.util.BigDecimalUtil.nz(p.effectivePricePerKg());
         Label priceLbl = new Label("Price/kg: " + Formatters.formatMoney(price));
+        priceLbl.getStyleClass().add("product-price");
 
         Label minOrderLbl = new Label(rule.note);
-        minOrderLbl.setStyle("-fx-text-fill: rgba(0,0,0,0.65); -fx-font-size: 11px;");
+        minOrderLbl.getStyleClass().add("product-min-order");
 
         java.math.BigDecimal stock = com.groupxx.greengrocer.util.BigDecimalUtil.nz(p.stockKg());
         java.math.BigDecimal reserved = com.groupxx.greengrocer.util.BigDecimalUtil
@@ -230,7 +274,7 @@ public final class CustomerHomeController {
         Label stockLbl;
         if (availableFinal.compareTo(java.math.BigDecimal.ZERO) <= 0) {
             stockLbl = new Label("Out of stock");
-            stockLbl.setStyle("-fx-text-fill: #b00020;");
+            stockLbl.getStyleClass().add("product-stock-empty");
         } else if (rule.unitType == com.groupxx.greengrocer.config.AppConfig.UnitType.PIECE
                 && rule.pieceWeightKg != null) {
             int availPieces = availableFinal.divide(rule.pieceWeightKg, 0, java.math.RoundingMode.FLOOR).intValue();
@@ -238,12 +282,16 @@ public final class CustomerHomeController {
                     "Available: " + Formatters.formatQuantity(availableFinal) + " kg (~" + availPieces + " pcs)");
             java.math.BigDecimal threshold = com.groupxx.greengrocer.util.BigDecimalUtil.nz(p.thresholdKg());
             if (availableFinal.compareTo(threshold) <= 0)
-                stockLbl.setStyle("-fx-text-fill: #d07a00;");
+                stockLbl.getStyleClass().add("product-stock-low");
+            else
+                stockLbl.getStyleClass().add("product-stock");
         } else {
             stockLbl = new Label("Available: " + Formatters.formatQuantity(availableFinal) + " kg");
             java.math.BigDecimal threshold = com.groupxx.greengrocer.util.BigDecimalUtil.nz(p.thresholdKg());
             if (availableFinal.compareTo(threshold) <= 0)
-                stockLbl.setStyle("-fx-text-fill: #d07a00;");
+                stockLbl.getStyleClass().add("product-stock-low");
+            else
+                stockLbl.getStyleClass().add("product-stock");
         }
 
         VBox info = new VBox(2, name, priceLbl, minOrderLbl, stockLbl);
@@ -312,11 +360,12 @@ public final class CustomerHomeController {
             }
         });
 
-        addBtn.setStyle(
-                "-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-        addBtn.setMinWidth(60);
-        manualBtn.setStyle("-fx-border-color: #bbb; -fx-background-color: #f9f9f9; -fx-cursor: hand;");
-        manualBtn.setMinWidth(80); // Increased for "Manual..."
+        addBtn.getStyleClass().add("button-primary");
+        addBtn.setMinWidth(80); // Increased to ensure "Add" text fits
+        addBtn.setText("Add");
+
+        manualBtn.getStyleClass().add("button");
+        manualBtn.setMinWidth(120); // Increased to ensure "Manual..." text fits
 
         addBtn.setOnAction(e -> {
             addBtn.setDisable(true);
