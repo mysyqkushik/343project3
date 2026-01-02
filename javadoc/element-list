@@ -1,0 +1,8 @@
+com.groupxx.greengrocer
+com.groupxx.greengrocer.app
+com.groupxx.greengrocer.config
+com.groupxx.greengrocer.controller
+com.groupxx.greengrocer.dao
+com.groupxx.greengrocer.db
+com.groupxx.greengrocer.model
+com.groupxx.greengrocer.util

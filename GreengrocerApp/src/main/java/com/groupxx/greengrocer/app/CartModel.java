@@ -14,7 +14,8 @@ public final class CartModel {
     private static final CartModel INSTANCE = new CartModel();
     private final Map<Long, CartLine> lines = new LinkedHashMap<>();
 
-    private CartModel() {}
+    private CartModel() {
+    }
 
     public static CartModel get() {
         return INSTANCE;
@@ -30,7 +31,7 @@ public final class CartModel {
     }
 
     public synchronized void addOrIncrease(long productId, String name, ProductCategory category,
-                                           BigDecimal unitPricePerKg, BigDecimal addKg) {
+            BigDecimal unitPricePerKg, BigDecimal addKg) {
         BigDecimal add = com.groupxx.greengrocer.util.NumericValidators.requirePositiveScale(
                 com.groupxx.greengrocer.util.BigDecimalUtil.nz(addKg), 2, "Amount (kg)");
 
@@ -53,7 +54,8 @@ public final class CartModel {
 
     public synchronized BigDecimal subtotal() {
         BigDecimal s = BigDecimal.ZERO;
-        for (CartLine l : lines.values()) s = s.add(com.groupxx.greengrocer.util.BigDecimalUtil.nz(l.lineTotal()));
+        for (CartLine l : lines.values())
+            s = s.add(com.groupxx.greengrocer.util.BigDecimalUtil.nz(l.lineTotal()));
         return scale2(s);
     }
 

@@ -13,7 +13,8 @@ import java.net.URL;
 public final class SceneRouter {
     private static Stage stage;
 
-    private SceneRouter() {}
+    private SceneRouter() {
+    }
 
     public static void init(Stage primaryStage) {
         stage = primaryStage;
@@ -37,8 +38,8 @@ public final class SceneRouter {
         SessionContext.set(username, role);
         switch (role) {
             case CUSTOMER -> setScene("/fxml/customer_home.fxml", AppConfig.APP_TITLE);
-            case CARRIER  -> setScene("/fxml/carrier_home.fxml", "Carrier - " + AppConfig.APP_TITLE);
-            case OWNER    -> setScene("/fxml/owner_home.fxml", "Owner - " + AppConfig.APP_TITLE);
+            case CARRIER -> setScene("/fxml/carrier_home.fxml", "Carrier - " + AppConfig.APP_TITLE);
+            case OWNER -> setScene("/fxml/owner_home.fxml", "Owner - " + AppConfig.APP_TITLE);
         }
     }
 
