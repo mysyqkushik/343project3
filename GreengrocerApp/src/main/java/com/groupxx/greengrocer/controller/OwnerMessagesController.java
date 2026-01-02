@@ -21,19 +21,26 @@ import java.util.List;
 /** Owner ↔ Customer messaging (reply as OWNER). */
 public final class OwnerMessagesController {
 
-    @FXML private ComboBox<UserRecord> customerCombo;
-    @FXML private Button reloadCustomersBtn;
-    @FXML private Button refreshConversationBtn;
+    @FXML
+    private ComboBox<UserRecord> customerCombo;
 
-    @FXML private TableView<MessageRecord> messageTable;
-    @FXML private TableColumn<MessageRecord, String> timeCol;
-    @FXML private TableColumn<MessageRecord, String> fromCol;
-    @FXML private TableColumn<MessageRecord, String> textCol;
+    @FXML
+    private TableView<MessageRecord> messageTable;
+    @FXML
+    private TableColumn<MessageRecord, String> timeCol;
+    @FXML
+    private TableColumn<MessageRecord, String> fromCol;
+    @FXML
+    private TableColumn<MessageRecord, String> textCol;
 
-    @FXML private TextArea messageInput;
-    @FXML private Button sendBtn;
-    @FXML private Button cancelSendBtn;
-    @FXML private Label sendTimerLabel;
+    @FXML
+    private TextArea messageInput;
+    @FXML
+    private Button sendBtn;
+    @FXML
+    private Button cancelSendBtn;
+    @FXML
+    private Label sendTimerLabel;
 
     private final UserDao userDao = new UserDao();
     private final MessageDao messageDao = new MessageDao();
@@ -48,39 +55,34 @@ public final class OwnerMessagesController {
     @FXML
     public void initialize() {
         customerCombo.setConverter(new javafx.util.StringConverter<>() {
-            @Override public String toString(UserRecord u) { return u == null ? "" : u.username(); }
-            @Override public UserRecord fromString(String s) { return null; }
+            @Override
+            public String toString(UserRecord u) {
+                return u == null ? "" : u.username();
+            }
+
+            @Override
+            public UserRecord fromString(String s) {
+                return null;
+            }
         });
 
         timeCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
-                Formatters.fmtDateTime(cd.getValue().createdAt())
-        ));
+                Formatters.fmtDateTime(cd.getValue().createdAt())));
         fromCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
-                cd.getValue().senderRole().name()
-        ));
+                cd.getValue().senderRole().name()));
         textCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
-                cd.getValue().messageText()
-        ));
+                cd.getValue().messageText()));
 
         setupCancelUi();
 
-        customerCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> refreshConversation());
+        customerCombo.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldV, newV) -> refreshConversation());
         reloadCustomers();
     }
 
     /** Called by OwnerHomeController "Refresh" button. */
     public void reload() {
         reloadCustomers();
-        refreshConversation();
-    }
-
-    @FXML
-    public void onReloadCustomers() {
-        reloadCustomers();
-    }
-
-    @FXML
-    public void onRefreshConversation() {
         refreshConversation();
     }
 
@@ -97,7 +99,8 @@ public final class OwnerMessagesController {
         }
 
         String text = messageInput.getText();
-        if (text == null) text = "";
+        if (text == null)
+            text = "";
         text = text.trim();
         if (text.isEmpty()) {
             Alerts.showWarn("Empty message", "Message cannot be empty.", "");
@@ -106,7 +109,8 @@ public final class OwnerMessagesController {
 
         // normalize spaces/newlines and limit length
         text = text.replaceAll("\\s+", " ").trim();
-        if (text.length() > 500) text = text.substring(0, 500);
+        if (text.length() > 500)
+            text = text.substring(0, 500);
 
         startPendingSend(customer.id(), text);
     }
@@ -140,9 +144,9 @@ public final class OwnerMessagesController {
         }
 
         try {
-            List<MessageRecord> msgs =
-                    all ? messageDao.listAllMessagesForOwner()
-                        : (customer == null ? java.util.List.of() : messageDao.listConversationForCustomerId(customer.id()));
+            List<MessageRecord> msgs = all ? messageDao.listAllMessagesForOwner()
+                    : (customer == null ? java.util.List.of()
+                            : messageDao.listConversationForCustomerId(customer.id()));
 
             messageTable.setItems(FXCollections.observableArrayList(msgs));
 
@@ -150,7 +154,8 @@ public final class OwnerMessagesController {
             fromCol.setCellValueFactory(cd -> {
                 MessageRecord m = cd.getValue();
                 String s = m.senderRole().name();
-                if (all) s = s + " (" + m.customerUsername() + ")";
+                if (all)
+                    s = s + " (" + m.customerUsername() + ")";
                 return new javafx.beans.property.SimpleStringProperty(s);
             });
 
@@ -158,7 +163,6 @@ public final class OwnerMessagesController {
             Alerts.showError("Load Failed", "Cannot load messages.", ex.getMessage());
         }
     }
-
 
     private void setupCancelUi() {
         if (sendTimerLabel != null) {

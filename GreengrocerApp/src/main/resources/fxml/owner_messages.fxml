@@ -15,8 +15,6 @@
                 <Label text="Customer:"/>
                 <ComboBox fx:id="customerCombo" prefWidth="220"/>
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Button fx:id="reloadCustomersBtn" text="Reload Customers" onAction="#onReloadCustomers"/>
-                <Button fx:id="refreshConversationBtn" text="Refresh Conversation" onAction="#onRefreshConversation"/>
             </children>
         </HBox>
     </top>
