@@ -174,6 +174,21 @@ public final class OwnerProductsController {
                 return;
             }
 
+            // Upper Limits Check (10,000)
+            BigDecimal LIMIT = new BigDecimal("10000");
+            if (price.compareTo(LIMIT) > 0) {
+                Alerts.warn("Validation", "Price cannot exceed 10,000.");
+                return;
+            }
+            if (stock.compareTo(LIMIT) > 0) {
+                Alerts.warn("Validation", "Stock cannot exceed 10,000 kg.");
+                return;
+            }
+            if (threshold.compareTo(LIMIT) > 0) {
+                Alerts.warn("Validation", "Threshold cannot exceed 10,000 kg.");
+                return;
+            }
+
             boolean active = activeCheck.isSelected();
 
             if (selected == null) {
