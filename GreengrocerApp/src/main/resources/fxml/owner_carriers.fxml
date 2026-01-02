@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.OwnerCarriersController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Button text="Add Carrier" onAction="#onAddCarrier"/>
+            <Button text="Delete Selected" onAction="#onDeleteCarrier"
+                    style="-fx-background-color: #b00020; -fx-text-fill: white;"/>
+            <Button text="Toggle Active" onAction="#onToggleActive"/>
+            <Button text="Refresh" onAction="#onRefresh"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+            <Label text="Active carriers" style="-fx-font-weight: bold;"/>
+            <TableView fx:id="carriersTable" prefHeight="220">
+                <columns>
+                    <TableColumn fx:id="usernameCol" text="Username" prefWidth="220"/>
+                    <TableColumn fx:id="activeCol" text="Active" prefWidth="80"/>
+                    <TableColumn fx:id="avgRatingCol" text="Avg Rating" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+            <Label text="Deleted carriers" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Undo Deletion" onAction="#onUndoDeletion"/>
+            </HBox>
+            <TableView fx:id="deletedTable" prefHeight="180">
+                <columns>
+                    <TableColumn fx:id="deletedUsernameCol" text="Username" prefWidth="220"/>
+                    <TableColumn fx:id="deletedAvgRatingCol" text="Avg Rating" prefWidth="120"/>
+                </columns>
+            </TableView>
+
+            <Label fx:id="statusLabel" text="" style="-fx-text-fill: rgba(0,0,0,0.65);"/>
+        </VBox>
+    </center>
+
+</BorderPane>

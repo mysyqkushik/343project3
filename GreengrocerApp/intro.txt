@@ -1,0 +1,30 @@
+GreengrocerApp — Run Steps (Option A)
+
+Requirements
+1) Java Development Kit (JDK) 23 installed (JAVA_HOME set).
+2) MySQL Server running locally.
+3) MySQL user and password must match AppConfig:
+   - username: myuser
+   - password: 1234
+   - database: greengrocer  (the app will create tables automatically)
+
+How to Run (Recommended)
+A) Open the folder 'GreengrocerApp' in IntelliJ IDEA.
+B) Wait for Maven import to finish.
+C) Run: com.groupxx.greengrocer.MainApp
+
+How to Run from Terminal
+1) Open a terminal in the 'GreengrocerApp' folder.
+2) Build:
+   mvn -q clean package
+3) Run with JavaFX plugin:
+   mvn -q javafx:run
+
+Test Users
+- Customer:  cust / cust
+- Carrier:   carr / carr
+- Owner:     own  / own
+
+Notes
+- Tables are auto-created/updated on app start.
+- Invoices are generated as PDF and stored in the database (order_info.invoice_pdf).

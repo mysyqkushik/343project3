@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.CustomerHomeController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <children>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Label text="User:"/>
+                <Label fx:id="usernameLabel"/>
+                <Button text="Orders" onAction="#onOpenOrders"/>
+                <Button text="Messages" onAction="#onOpenMessages"/>
+                <Button text="Profile" onAction="#onOpenProfile"/>
+                <Button fx:id="cartButton" text="Cart" onAction="#onOpenCart"/>
+                <Button text="Logout" onAction="#onLogout"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <children>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Quick search:"/>
+                        <TextField fx:id="searchField" promptText="type keyword..."/>
+                        <ComboBox fx:id="categoryFilter" prefWidth="160"/>
+                        <Button text="Clear" onAction="#onClearSearch"/>
+                    </children>
+                </HBox>
+
+                <Accordion fx:id="accordion">
+                    <panes>
+                        <TitledPane text="Vegetables" expanded="true">
+                            <content>
+                                <ScrollPane fitToWidth="true">
+                                    <content>
+                                        <VBox fx:id="vegetablesBox" spacing="8">
+                                            <padding>
+                                                <Insets top="10" right="10" bottom="10" left="10"/>
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </TitledPane>
+
+                        <TitledPane text="Fruits" expanded="false">
+                            <content>
+                                <ScrollPane fitToWidth="true">
+                                    <content>
+                                        <VBox fx:id="fruitsBox" spacing="8">
+                                            <padding>
+                                                <Insets top="10" right="10" bottom="10" left="10"/>
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </TitledPane>
+                    </panes>
+                </Accordion>
+
+                <Label fx:id="statusLabel"/>
+            </children>
+        </VBox>
+    </center>
+
+    <padding>
+        <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+
+</BorderPane>

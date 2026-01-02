@@ -1,0 +1,5 @@
+.root { -fx-font-size: 14px; }
+.title { -fx-font-size: 22px; -fx-font-weight: bold; }
+.subtitle { -fx-font-size: 13px; -fx-opacity: 0.75; }
+.status { -fx-text-fill: #b00020; }
+.mono { -fx-font-family: "Consolas"; }

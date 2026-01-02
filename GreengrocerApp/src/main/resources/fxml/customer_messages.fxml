@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.CustomerMessagesController">
+
+    <top>
+        <HBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="Messages (Customer ↔ Owner)"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefresh"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="messageTable" prefHeight="400">
+            <columns>
+                <TableColumn fx:id="timeCol" text="Time" prefWidth="160" />
+                <TableColumn fx:id="fromCol" text="From" prefWidth="120" />
+                <TableColumn fx:id="textCol" text="Message" prefWidth="420" />
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <VBox spacing="8">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="Write a message to the owner:" />
+            <TextArea fx:id="messageInput" prefRowCount="3" wrapText="true" />
+            <HBox spacing="10">
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Label fx:id="sendTimerLabel" text="" />
+                <Button fx:id="cancelSendBtn" text="Cancel sending" onAction="#onCancelSend"
+                        style="-fx-background-color: #b00020; -fx-text-fill: white;" />
+                <Button fx:id="sendBtn" text="Send" onAction="#onSend" />
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>

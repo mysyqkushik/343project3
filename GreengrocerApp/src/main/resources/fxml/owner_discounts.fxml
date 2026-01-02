@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.OwnerDiscountsController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <children>
+                <Label text="Discounts &amp; Loyalty" style="-fx-font-weight: bold;"/>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button text="Reload" onAction="#onReload"/>
+                <Button text="Save" onAction="#onSave"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <GridPane hgap="10" vgap="10">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <columnConstraints>
+                <ColumnConstraints minWidth="200" halignment="RIGHT"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <children>
+                <Label text="Coupon code" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="couponCodeField" promptText="e.g., SAVE10" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Coupon discount rate" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="couponRateField" promptText="e.g., 0.10 or 10" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Coupon min subtotal" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="couponMinSubtotalField" promptText="e.g., 200.00" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Separator GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+
+                <Label text="Loyalty discount rate" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="loyaltyRateField" promptText="e.g., 0.05 or 5" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                <Label text="Loyalty min delivered orders" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="loyaltyMinDeliveredField" promptText="e.g., 5" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                <Label text="Notes" style="-fx-font-weight: bold;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <Label wrapText="true"
+                       text="Rates can be typed as decimals (0.10) or as percentages (10). Coupon applies only if code matches and subtotal >= min. Loyalty applies only if delivered orders >= min."
+                       GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+            </children>
+        </GridPane>
+    </center>
+
+</BorderPane>

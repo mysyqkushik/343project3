@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.CartController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Cart" styleClass="title"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="Remove Selected" onAction="#onRemoveSelected"/>
+            <Button text="Clear" onAction="#onClear"/>
+            <Button text="Close" onAction="#onClose"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="table">
+            <columns>
+                <TableColumn fx:id="colName" text="Product" prefWidth="240"/>
+                <TableColumn fx:id="colKg" text="Kg" prefWidth="90"/>
+                <TableColumn fx:id="colUnit" text="Unit Price/kg" prefWidth="120"/>
+                <TableColumn fx:id="colTotal" text="Line Total" prefWidth="120"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <VBox spacing="8">
+            <Label fx:id="rulesLabel" wrapText="true" styleClass="subtitle"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Coupon:"/>
+                <TextField fx:id="couponField" promptText="e.g. SAVE10" prefWidth="160"/>
+                <Label text="Delivery date:"/>
+                <DatePicker fx:id="deliveryDate"/>
+                <Label text="Time:"/>
+                <Spinner fx:id="hourSpinner" prefWidth="70"/>
+                <Label text=":"/>
+                <Spinner fx:id="minSpinner" prefWidth="70"/>
+            </HBox>
+
+            <HBox spacing="20" alignment="CENTER_RIGHT">
+                <Label fx:id="subtotalLabel"/>
+                <Label fx:id="discountLabel"/>
+                <Label fx:id="vatLabel"/>
+                <Label fx:id="totalLabel" style="-fx-font-weight: bold;"/>
+                <Button fx:id="checkoutButton" text="Checkout" onAction="#onCheckout"/>
+            </HBox>
+
+            <Label fx:id="statusLabel" styleClass="status"/>
+        </VBox>
+    </bottom>
+
+    <padding>
+        <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+</BorderPane>

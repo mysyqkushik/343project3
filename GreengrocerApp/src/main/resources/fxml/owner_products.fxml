@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.OwnerProductsController">
+    <center>
+        <SplitPane dividerPositions="0.65">
+            <items>
+
+                <VBox spacing="8">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+
+                    <TableView fx:id="table" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                            <TableColumn fx:id="colName" text="Name" prefWidth="180"/>
+                            <TableColumn fx:id="colCategory" text="Category" prefWidth="100"/>
+                            <TableColumn fx:id="colPrice" text="Price/kg" prefWidth="90"/>
+                            <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
+                            <TableColumn fx:id="colThreshold" text="Threshold" prefWidth="80"/>
+                            <TableColumn fx:id="colActive" text="Active" prefWidth="70"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="8">
+                        <Button text="Reload" onAction="#onReload"/>
+                        <Button text="New" onAction="#onNew"/>
+                        <Button text="Save" onAction="#onSave"/>
+                        <Button text="Toggle Active" onAction="#onToggleActive"/>
+                        <Button text="Upload Image" onAction="#onUploadImage"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="10">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+
+                    <Label text="Selected Product ID:"/>
+                    <Label fx:id="selectedIdLabel" text="New" style="-fx-font-weight: bold;"/>
+
+                    <GridPane hgap="8" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="90"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Category" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="categoryBox" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Price/kg" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="priceField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Stock (kg)" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="stockField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Threshold (kg)" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="thresholdField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                        <Label text="Active" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <CheckBox fx:id="activeCheck" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <Label text="Note: When Stock &lt;= Threshold, Customer price is doubled (rule is applied when item is added to cart)."
+                           wrapText="true"/>
+                </VBox>
+
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

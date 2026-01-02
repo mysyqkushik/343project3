@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.LoginController">
+
+    <center>
+        <VBox spacing="12" alignment="CENTER" maxWidth="360">
+            <Label text="Login" styleClass="title"/>
+
+            <TextField fx:id="usernameField" promptText="cust / carr / own"/>
+            <PasswordField fx:id="passwordField" promptText="Password" onAction="#onLogin"/>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="loginButton" text="Login" onAction="#onLogin"/>
+                <Button fx:id="registerButton" text="Register (Customer)" onAction="#onOpenRegister"/>
+            </HBox>
+
+            <Label fx:id="statusLabel" styleClass="status"/>
+        </VBox>
+    </center>
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+</BorderPane>

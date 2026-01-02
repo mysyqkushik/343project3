@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.OwnerMessagesController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <children>
+                <Label text="Customer:"/>
+                <ComboBox fx:id="customerCombo" prefWidth="220"/>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="reloadCustomersBtn" text="Reload Customers" onAction="#onReloadCustomers"/>
+                <Button fx:id="refreshConversationBtn" text="Refresh Conversation" onAction="#onRefreshConversation"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="messageTable">
+            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+            <columns>
+                <TableColumn fx:id="timeCol" text="Time" prefWidth="140"/>
+                <TableColumn fx:id="fromCol" text="From" prefWidth="110"/>
+                <TableColumn fx:id="textCol" text="Message"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <VBox spacing="8">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <children>
+                <Label text="Reply as Owner:"/>
+                <TextArea fx:id="messageInput" prefRowCount="3" wrapText="true"/>
+                <HBox alignment="CENTER_RIGHT">
+                    <children>
+                        <Label fx:id="sendTimerLabel" text=""/>
+            <Button fx:id="cancelSendBtn" text="Cancel sending" onAction="#onCancelSend"
+                    style="-fx-background-color: #b00020; -fx-text-fill: white;"/>
+            <Button fx:id="sendBtn" text="Send" onAction="#onSend"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </bottom>
+
+</BorderPane>

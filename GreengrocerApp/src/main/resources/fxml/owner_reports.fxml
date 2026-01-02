@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.groupxx.greengrocer.controller.OwnerReportsController">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <children>
+                <Label text="Reports" style="-fx-font-weight: bold;"/>
+                <Label text="Days:"/>
+                <ComboBox fx:id="daysCombo" prefWidth="120"/>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button text="Reload" onAction="#onReload"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <children>
+                <TitledPane text="Daily sales (orders + revenue)" collapsible="false">
+                    <content>
+                        <LineChart fx:id="salesChart" prefHeight="320" prefWidth="700">
+                            <xAxis>
+                                <CategoryAxis label="Day"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Value"/>
+                            </yAxis>
+                        </LineChart>
+                    </content>
+                </TitledPane>
+
+                <TitledPane text="Carrier ratings" collapsible="false">
+                    <content>
+                        <BarChart fx:id="ratingsChart" prefHeight="280" prefWidth="700">
+                            <xAxis>
+                                <CategoryAxis label="Carrier"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Average rating" autoRanging="true"/>
+                            </yAxis>
+                        </BarChart>
+                    </content>
+                </TitledPane>
+            </children>
+        </VBox>
+    </center>
+
+</BorderPane>
