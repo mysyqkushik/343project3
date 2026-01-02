@@ -178,6 +178,20 @@ public final class OwnerCarriersController {
         if (!ok)
             return;
 
+        // Check for active orders before deleting
+        try {
+            int activeOrders = orderDao.countActiveOrdersForCarrierId(rec.id());
+            if (activeOrders > 0) {
+                Alerts.showWarn("Cannot Delete",
+                        "This carrier has " + activeOrders + " active delivery(ies) in progress.",
+                        "Wait until all deliveries are completed before deleting.");
+                return;
+            }
+        } catch (Exception ex) {
+            Alerts.showError("Check Failed", "Cannot check carrier orders.", ex.getMessage());
+            return;
+        }
+
         try {
             userDao.deleteCarrier(rec.id());
             statusLabel.setText("Deleted carrier: " + rec.username());

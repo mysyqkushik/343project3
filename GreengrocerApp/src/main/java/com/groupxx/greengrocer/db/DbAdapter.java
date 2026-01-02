@@ -26,7 +26,8 @@ public final class DbAdapter {
     }
 
     public static synchronized DbAdapter getInstance() {
-        if (instance == null) instance = new DbAdapter();
+        if (instance == null)
+            instance = new DbAdapter();
         return instance;
     }
 
@@ -36,7 +37,8 @@ public final class DbAdapter {
 
     public void testConnection() throws SQLException {
         try (Connection c = getConnection()) {
-            if (c == null || c.isClosed()) throw new SQLException("Connection is null/closed.");
+            if (c == null || c.isClosed())
+                throw new SQLException("Connection is null/closed.");
         }
     }
 }

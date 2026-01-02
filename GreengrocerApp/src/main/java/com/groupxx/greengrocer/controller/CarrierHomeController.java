@@ -109,7 +109,9 @@ public class CarrierHomeController {
                     fail++;
             }
 
-            Alerts.info("Claim Result", "Claimed: " + ok + "\nFailed (already taken): " + fail);
+            if (fail > 0) {
+                Alerts.info("Claim Result", "Claimed: " + ok + "\nFailed (already taken): " + fail);
+            }
             loadAll();
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Claim operation failed", e);

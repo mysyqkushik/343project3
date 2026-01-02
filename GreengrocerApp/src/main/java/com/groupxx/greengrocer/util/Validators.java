@@ -36,7 +36,8 @@ public final class Validators {
     public static boolean isReasonablePhone(String phone) {
         if (phone == null || phone.isBlank())
             return true;
-        String p = phone.trim();
+        // Strip spaces to allow formats like "+90 555 123 4567"
+        String p = phone.replaceAll("\\s+", "");
         // Turkish format: +90XXXXXXXXXX or 0XXXXXXXXXX
         return p.matches("^\\+90\\d{10}$") || p.matches("^0\\d{10}$");
     }

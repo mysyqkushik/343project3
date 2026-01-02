@@ -86,7 +86,7 @@ public final class ProfileController {
             // Validate phone format (Turkish: +90XXXXXXXXXX or 0XXXXXXXXXX)
             if (!Validators.isReasonablePhone(phone)) {
                 Alerts.showWarn("Invalid phone", "Phone format is incorrect.",
-                        "Use Turkish format: +90XXXXXXXXXX or 0XXXXXXXXXX");
+                        "Use Turkish format: +90... or 0... (spaces allowed)");
                 return;
             }
 
