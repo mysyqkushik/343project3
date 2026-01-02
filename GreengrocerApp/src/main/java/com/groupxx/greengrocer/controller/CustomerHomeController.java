@@ -37,12 +37,12 @@ public final class CustomerHomeController {
     @FXML
     private TextField searchField;
     @FXML
-    private ComboBox<String> categoryFilter;
+    private ComboBox<String> sortCombo;
 
     @FXML
-    private VBox vegetablesBox;
+    private javafx.scene.layout.FlowPane vegetablesFlow;
     @FXML
-    private VBox fruitsBox;
+    private javafx.scene.layout.FlowPane fruitsFlow;
     @FXML
     private Label statusLabel;
 
@@ -54,11 +54,16 @@ public final class CustomerHomeController {
         usernameLabel.setText(SessionContext.username() == null ? "" : SessionContext.username());
 
         TextLimiters.limitLength(searchField, 64);
-        categoryFilter.getItems().setAll("All", "Vegetables", "Fruits");
-        categoryFilter.getSelectionModel().select("All");
+
+        sortCombo.getItems().setAll(
+                "Name (A-Z)",
+                "Price (Low to High)",
+                "Price (High to Low)",
+                "Stock (High to Low)");
+        sortCombo.getSelectionModel().select(0);
 
         searchField.textProperty().addListener((obs, oldV, newV) -> render());
-        categoryFilter.valueProperty().addListener((obs, oldV, newV) -> render());
+        sortCombo.valueProperty().addListener((obs, oldV, newV) -> render());
 
         reloadProducts();
     }
@@ -78,7 +83,7 @@ public final class CustomerHomeController {
     @FXML
     private void onClearSearch() {
         searchField.setText("");
-        categoryFilter.getSelectionModel().select("All");
+        sortCombo.getSelectionModel().select(0);
         statusLabel.setText("");
     }
 
@@ -120,26 +125,48 @@ public final class CustomerHomeController {
 
     private void render() {
         String keyword = Validators.normalize(searchField.getText()).toLowerCase();
-        String cat = categoryFilter.getValue();
+        String sort = sortCombo.getValue();
+        if (sort == null)
+            sort = "Name (A-Z)";
 
-        vegetablesBox.getChildren().clear();
-        fruitsBox.getChildren().clear();
+        vegetablesFlow.getChildren().clear();
+        fruitsFlow.getChildren().clear();
 
+        List<ProductRecord> filtered = new ArrayList<>();
         for (ProductRecord p : allProducts) {
             if (!keyword.isEmpty() && !p.name().toLowerCase().contains(keyword))
                 continue;
+            filtered.add(p);
+        }
 
-            if ("Vegetables".equals(cat) && p.category() != ProductCategory.VEGETABLE)
-                continue;
-            if ("Fruits".equals(cat) && p.category() != ProductCategory.FRUIT)
-                continue;
+        // Sorting
+        final String s = sort;
+        filtered.sort((p1, p2) -> {
+            switch (s) {
+                case "Price (Low to High)":
+                    return p1.effectivePricePerKg().compareTo(p2.effectivePricePerKg());
+                case "Price (High to Low)":
+                    return p2.effectivePricePerKg().compareTo(p1.effectivePricePerKg());
+                case "Stock (High to Low)":
+                    BigDecimal stock1 = com.groupxx.greengrocer.util.BigDecimalUtil.nz(p1.stockKg());
+                    BigDecimal stock2 = com.groupxx.greengrocer.util.BigDecimalUtil.nz(p2.stockKg());
+                    return stock2.compareTo(stock1);
+                default: // Name (A-Z)
+                    return p1.name().compareToIgnoreCase(p2.name());
+            }
+        });
 
+        for (ProductRecord p : filtered) {
             HBox row = createProductRow(p);
+            // Adjust row for FlowPane (optional card style)
+            row.setStyle(
+                    "-fx-border-color: #ddd; -fx-border-radius: 8; -fx-background-radius: 8; -fx-background-color: white; -fx-padding: 10;");
+            row.setPrefWidth(300);
 
             if (p.category() == ProductCategory.VEGETABLE)
-                vegetablesBox.getChildren().add(row);
-            else
-                fruitsBox.getChildren().add(row);
+                vegetablesFlow.getChildren().add(row);
+            else if (p.category() == ProductCategory.FRUIT)
+                fruitsFlow.getChildren().add(row);
         }
 
         int cartCount = CartModel.get().snapshot().size();
@@ -232,7 +259,8 @@ public final class CustomerHomeController {
         boolean canBuy = !defaultOptions.isEmpty() && availableFinal.compareTo(java.math.BigDecimal.ZERO) > 0;
 
         if (canBuy) {
-            qtyBox.getSelectionModel().select(0);
+            qtyBox.setPromptText("Select...");
+            // Do NOT select first item by default
         }
 
         Button manualBtn = new Button("Manual…");
@@ -283,6 +311,12 @@ public final class CustomerHomeController {
                 Alerts.showError("Manual Input Failed", "Cannot set manual amount.", ex.getMessage());
             }
         });
+
+        addBtn.setStyle(
+                "-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        addBtn.setMinWidth(60);
+        manualBtn.setStyle("-fx-border-color: #bbb; -fx-background-color: #f9f9f9; -fx-cursor: hand;");
+        manualBtn.setMinWidth(80); // Increased for "Manual..."
 
         addBtn.setOnAction(e -> {
             addBtn.setDisable(true);
@@ -338,7 +372,9 @@ public final class CustomerHomeController {
 
         HBox row = new HBox(12, iv, info, qtyBox, selectedQtyLabel, manualBtn, addBtn);
         row.setPadding(new javafx.geometry.Insets(6));
-        row.setStyle("-fx-border-color: rgba(0,0,0,0.10); -fx-border-radius: 6; -fx-background-radius: 6;");
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        HBox.setHgrow(info, Priority.ALWAYS); // Ensure info box takes available space
+
         return row;
     }
 
